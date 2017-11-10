@@ -1,0 +1,13 @@
+name: 'iziproxy'
+version: 0.1.0
+
+dependencies:
+  # database
+  pg:
+    github: will/crystal-pg
+
+  # html-template
+  crinja:
+    github: straight-shoota/crinja
+
+license: MIT
