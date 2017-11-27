@@ -13,7 +13,8 @@ require "./models/subdomain"
 #
 require "./headers"
 require "./tcp_server"
-require "./http_server"
+
+# require "./http_server"
 
 module App
   class Server
@@ -21,7 +22,7 @@ module App
       :tcp_server, :http_server,
       :http_port, :tcp_port, :host
 
-    property :tcp_server, :http_server
+    property :tcp_server
 
     def initialize(@log : Logger)
       @clients = {} of String => Models::Client
@@ -35,16 +36,10 @@ module App
       if server = @tcp_server = TcpServer.new(self, @log)
         server.port = @tcp_port
       end
-
-      if server = @http_server = HttpServer.new(self, @log)
-        server.port = @http_port
-        server.host = @host
-      end
     end
 
     def start
       @tcp_server.not_nil!.start
-      @http_server.not_nil!.start
     end
   end
 end

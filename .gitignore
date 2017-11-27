@@ -2,5 +2,7 @@
 /log/*
 /tmp/*
 
+/.bin
 /.shards
 /lib
+.icr_*

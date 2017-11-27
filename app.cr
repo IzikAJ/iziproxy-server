@@ -1,13 +1,27 @@
-# require "sinatra"
-# require "sinatra/multi_route"
-require "./app/server"
-# require "byebug"
+require "kemal"
+require "dotenv"
+require "./app/patches/engine"
+require "./app/*"
+require "./app/middleware/*"
+
+Dotenv.load
 
 log = Logger.new(STDOUT)
-# log.level = Logger::WARN
-# log.level = Logger::ERROR
 log.level = Logger::INFO
 
+host = "lvh.me"
+
+log = Logger.new(STDOUT)
 server = App::Server.new(log)
+# filters must be inserted from most common to specific one
+Kemal.config.add_filter_handler(App::Middleware::SessionHandler.new(ENV["SESSION_KEY"]))
+Kemal.config.add_filter_handler(App::Middleware::SubdomainMatcher.new(
+  host, "*.@", App::ProxySubdomainHandler.new(server)
+))
+
+get "/" do
+  "Hello world \n #{server.subdomains.inspect}"
+end
 
 server.start
+Kemal.run
