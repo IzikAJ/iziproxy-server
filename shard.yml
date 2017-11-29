@@ -5,12 +5,11 @@ dependencies:
   # database
   pg:
     github: will/crystal-pg
-  # migration managment
-  micrate:
-    github: juanedi/micrate
   # ORM
   granite_orm:
     github: amberframework/granite-orm
+  core:
+    github: vladfaust/core.cr
 
   # html-template
   crinja:
@@ -22,9 +21,17 @@ dependencies:
 
   kemal:
     github: kemalcr/kemal
+  kilt:
+    github: jeromegn/kilt
+  slang:
+    github: jeromegn/slang
 
 development_dependencies:
   sentry-run:
     github: faustinoaq/sentry-run
+
+  # migration managment
+  micrate:
+    github: juanedi/micrate
 
 license: MIT

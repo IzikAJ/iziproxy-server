@@ -19,9 +19,7 @@ Kemal.config.add_filter_handler(App::Middleware::SubdomainMatcher.new(
   host, "*.@", App::ProxySubdomainHandler.new(server)
 ))
 
-get "/" do
-  "Hello world \n #{server.subdomains.inspect}"
-end
+http_server = App::HttpServer.new(server)
 
 server.start
 Kemal.run

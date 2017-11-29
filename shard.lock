@@ -1,5 +1,9 @@
 version: 1.0
 shards:
+  core:
+    github: vladfaust/core.cr
+    version: 0.3.3
+
   crinja:
     github: straight-shoota/crinja
     commit: 5d1d5af8e2f582702f5b85877b6d9e6c213eefee
@@ -43,4 +47,12 @@ shards:
   sentry-run:
     github: faustinoaq/sentry-run
     version: 0.2.0
+
+  slang:
+    github: jeromegn/slang
+    version: 1.7.0
+
+  time_format:
+    github: vladfaust/time_format.cr
+    version: 0.1.0
 

@@ -15,7 +15,6 @@ module App
         # env.request.session = nil
         user_session!(env)
 
-        puts "!!!!! SESSION: #{env.request.session.inspect} !!!!!"
         call_next(env)
       end
 

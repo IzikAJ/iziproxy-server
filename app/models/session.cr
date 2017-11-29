@@ -18,6 +18,10 @@ module App
 
       before_save :generate_token
 
+      def user?
+        !(user_id.nil? || User.find(user_id).nil?)
+      end
+
       protected def generate_token
         @token ||= SecureRandom.hex(128)
       end

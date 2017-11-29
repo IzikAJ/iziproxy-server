@@ -9,7 +9,7 @@ module App
       table_name "auth_tokens"
 
       primary id : Int64 | Int32
-      field user_id : Int64 | Int32
+      field user_id : Int64 | Int32 | Nil
       field token : String
       field expired : Bool
       timestamps

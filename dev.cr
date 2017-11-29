@@ -7,7 +7,10 @@ process = Sentry.config(
   files: [
     "app.cr",
     "app/**/*.cr", "app/**/*.ecr",
+    "app/**/*.slang", "app/**/*.slim",
     "config/**/*.cr", "config/**/*.ecr",
   ],
   build_args: ["build", "app.cr", "-o", ".bin/app"],
   run_args: ["-p", "9000"])
+
+Sentry.run(process) do end
