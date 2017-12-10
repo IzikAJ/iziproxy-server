@@ -1,8 +1,8 @@
 require "kemal"
 require "dotenv"
-require "./app/patches/engine"
-require "./app/*"
+require "./app/lib/engine"
 require "./app/middleware/*"
+require "./app/*"
 
 Dotenv.load
 
@@ -12,14 +12,14 @@ log.level = Logger::INFO
 host = "lvh.me"
 
 log = Logger.new(STDOUT)
-server = App::Server.new(log)
+server = Server.new(log)
 # filters must be inserted from most common to specific one
-Kemal.config.add_filter_handler(App::Middleware::SessionHandler.new(ENV["SESSION_KEY"]))
-Kemal.config.add_filter_handler(App::Middleware::SubdomainMatcher.new(
-  host, "*.@", App::ProxySubdomainHandler.new(server)
+Kemal.config.add_filter_handler(Middleware::SessionHandler.new(ENV["SESSION_KEY"]))
+Kemal.config.add_filter_handler(Middleware::SubdomainMatcher.new(
+  host, "*.@", ProxySubdomainHandler.new(server)
 ))
 
-http_server = App::HttpServer.new(server)
+http_server = HttpServer.new(server)
 
 server.start
 Kemal.run

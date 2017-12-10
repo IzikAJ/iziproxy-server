@@ -1,0 +1,19 @@
+h1 TODO
+
+- if form.errors.keys.size > 0
+  ul
+    b Some errors occured:
+    - form.errors.each do |field, msg|
+      li #{field}: #{msg}
+
+== form_for form, action: "/auth/password/update", as: "user" do |f|
+  == f.input :token, type: :hidden
+  .field
+    == f.input :password, type: :password, placeholder: "new password"
+  .field
+    == f.input :password_confirmation, type: :password, placeholder: "confirm new password"
+
+  .controlls
+    == f.submit value: "Change Password"
+
+== link_to "Login", "/auth/session/new"

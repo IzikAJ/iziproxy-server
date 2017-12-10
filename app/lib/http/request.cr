@@ -9,5 +9,5 @@ class HTTP::Request
   # add session to request
   property session
   setter session
-  getter session : App::Models::Session | Nil
+  getter session : Session | Nil
 end

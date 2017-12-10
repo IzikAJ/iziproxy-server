@@ -1,19 +1,26 @@
 require "../*"
+require "../forms/*"
 require "./application_controller"
 
 class LoginController < ApplicationController
+  property form : LoginForm = LoginForm.new
+
+  def new
+    redirect_to "/stats" if user_signed_in?
+    render "app/views/auth/session/new.slim"
+  end
+
   def create
-    # context.params.body.fetch("email", nil)
-    # context.params.body.fetch("password", nil)
-    mail = context.params.body.fetch("email", nil)
-    password = context.params.body.fetch("password", nil)
-    tmp_user = App::Models::User.first("email = ?", mail)
-    if (user = tmp_user) && (session = context.request.session)
-      if user.valid_password?(password.not_nil!)
-        session.user_id = user.id.as(Int64)
-        session.save
-      end
+    form = LoginForm.from_params(context.params)
+    if form && form.valid? &&
+       (session = context.request.session) &&
+       (user = form.user)
+      session.user_id = user.id.not_nil!.to_i64
+      session.save
+      redirect_to "/", 302
+      return
     end
-    render "app/views/welcome/show.slim"
+    status_code! 422
+    render "app/views/auth/session/new.slim"
   end
 end

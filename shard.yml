@@ -8,12 +8,6 @@ dependencies:
   # ORM
   granite_orm:
     github: amberframework/granite-orm
-  core:
-    github: vladfaust/core.cr
-
-  # html-template
-  crinja:
-    github: straight-shoota/crinja
 
   # dotenv
   dotenv:
@@ -25,6 +19,9 @@ dependencies:
     github: jeromegn/kilt
   slang:
     github: jeromegn/slang
+
+  sendgrid:
+    github: dlanileonardo/sendgrid.cr
 
 development_dependencies:
   sentry-run:

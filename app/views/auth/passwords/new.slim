@@ -1,0 +1,16 @@
+h1 Remind password
+
+- if form.errors.keys.size > 0
+  ul
+    b Some errors occured:
+    - form.errors.each do |field, msg|
+      li #{field}: #{msg}
+
+== form_for form, action: "/auth/password/create", as: "user" do |f|
+  .field
+    == f.input :email, type: :email, placeholder: "your email"
+
+  .controlls
+    == f.submit value: "Send Restore Instructions"
+
+== link_to "Login", "/auth/session/new"

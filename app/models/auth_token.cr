@@ -1,26 +1,21 @@
-require "../config/db"
-require "granite_orm/adapter/pg"
+require "./base_model"
 require "secure_random"
 
-module App
-  module Models
-    class AuthToken < Granite::ORM::Base
-      adapter pg
-      table_name "auth_tokens"
+class AuthToken < Granite::ORM::Base
+  include BaseModel
+  adapter pg
+  table_name auth_tokens
+  primary id : Int32 | Int64
+  field user_id : Int32 | Int64
+  field token : String
+  field expired_at : Time
+  timestamps
 
-      primary id : Int64 | Int32
-      field user_id : Int64 | Int32 | Nil
-      field token : String
-      field expired : Bool
-      timestamps
+  belongs_to :user
+  before_save :fill_defaults!
 
-      belongs_to :user
-
-      before_save :generate_token
-
-      protected def generate_token
-        @token ||= SecureRandom.hex(50)
-      end
-    end
+  protected def fill_defaults!
+    @token ||= SecureRandom.hex(50)
+    @expired_at ||= Time.now + 1.week
   end
 end

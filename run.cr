@@ -10,7 +10,7 @@ end
 host = "lvh.me"
 
 log = Logger.new(STDOUT)
-server = App::Server.new(log)
+server = Server.new(log)
 # filters must be inserted
 # from most common
 # to specific one

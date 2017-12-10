@@ -5,7 +5,7 @@ CREATE TABLE auth_tokens (
   user_id BIGINT NOT NULL,
   token VARCHAR(100) NOT NULL,
   remote_ip INET,
-  expired BOOLEAN DEFAULT FALSE,
+  expired_at TIMESTAMP,
   created_at TIMESTAMP,
   updated_at TIMESTAMP
 );

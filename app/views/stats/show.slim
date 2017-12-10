@@ -1,10 +1,6 @@
-h1  Welcome Page
-h2 Proxy Stats
+h1 Stats Page
 h3 YEAH!!!
 - if user_signed_in?
   h2
     ' HELLO
     = current_user.try(&.name) || current_user.try(&.email)
-  a href="/stats" Stats
-- else
-  a href="/auth/session/new" Login

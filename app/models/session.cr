@@ -1,30 +1,27 @@
-require "../config/db"
-require "granite_orm/adapter/pg"
+require "./base_model"
 require "secure_random"
 
-module App
-  module Models
-    class Session < Granite::ORM::Base
-      adapter pg
-      table_name "sessions"
+class Session < Granite::ORM::Base
+  include BaseModel
 
-      primary id : Int64 | Int32
-      field user_id : Int64 | Int32 | Nil
-      field token : String
-      field expired : Bool
-      timestamps
+  adapter pg
+  table_name sessions
 
-      belongs_to :user
+  primary id : Int32 | Int64
+  field user_id : Int32 | Int64 | Nil
+  field token : String
+  field expired : Bool
+  timestamps
 
-      before_save :generate_token
+  belongs_to :user
 
-      def user?
-        !(user_id.nil? || User.find(user_id).nil?)
-      end
+  before_save :generate_token
 
-      protected def generate_token
-        @token ||= SecureRandom.hex(128)
-      end
-    end
+  def user?
+    !(user_id.nil? || User.find(user_id).nil?)
+  end
+
+  protected def generate_token
+    @token ||= SecureRandom.hex(128)
   end
 end

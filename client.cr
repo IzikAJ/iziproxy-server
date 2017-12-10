@@ -4,7 +4,7 @@ require "socket"
 require "json"
 require "base64"
 require "logger"
-require "./app/headers"
+require "./app/lib/utils/headers"
 # require "byebug"
 
 log = Logger.new(STDOUT)
@@ -58,7 +58,7 @@ loop do
 
         method = request["method"].as_s.upcase
         path = request["path"].as_s
-        headers = App::Headers.parse_json(request["headers"])
+        headers = App::Utils::Headers.parse_json(request["headers"])
         body = Base64.decode(request["body"].as_s)
 
         log.info "REQ: #{method} #{path}"
@@ -80,7 +80,7 @@ loop do
               json.object do
                 json.field :status, response.status_code
                 json.field :headers do
-                  App::Headers.build_json(json, response.headers)
+                  App::Utils::Headers.build_json(json, response.headers)
                 end
                 json.field :body, Base64.encode(response.body)
               end
