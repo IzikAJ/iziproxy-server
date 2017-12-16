@@ -10,6 +10,7 @@ CREATE TABLE auth_tokens (
   updated_at TIMESTAMP
 );
 CREATE UNIQUE INDEX uniq_auth_tokens ON auth_tokens (token);
+
 -- +micrate Down
 -- SQL section 'Down' is executed when this migration is rolled back
 DROP INDEX uniq_auth_tokens;

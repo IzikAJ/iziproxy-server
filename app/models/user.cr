@@ -13,9 +13,11 @@ class User < Granite::ORM::Base
   field email : String
   field encrypted_password : String
   field reset_password_token : String
+  field last_login_at : Time
   timestamps
 
   has_many :auth_tokens
+  has_many :sessions
 
   @password : String | Nil
 

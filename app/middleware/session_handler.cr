@@ -29,12 +29,13 @@ module Middleware
         write_session_cookies(env)
       else
         session = Session.first(
-          "WHERE token = ? AND (expired = ? OR expired = ?)",
-          [session_token, false, nil]
+          "WHERE token = ? AND expired_at > ?",
+          [session_token, Time.now]
         )
         if session.nil?
           write_session_cookies(env)
         else
+          session.update_expiration_time!
           env.request.session = session
         end
       end
@@ -42,7 +43,7 @@ module Middleware
 
     protected def write_session_cookies(env : HTTP::Server::Context)
       cookies = HTTP::Cookies.new
-      session = Session.new(user_id: nil, expired: false)
+      session = Session.new(user_id: nil, expired_at: Session::EXPIRE_TIMEOUT.from_now)
       if session
         session.save
         cookies << HTTP::Cookie.new(

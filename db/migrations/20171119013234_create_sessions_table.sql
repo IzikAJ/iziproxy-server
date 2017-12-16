@@ -5,7 +5,7 @@ CREATE TABLE sessions (
   user_id BIGINT,
   token VARCHAR(256) NOT NULL,
   remote_ip INET,
-  expired BOOLEAN DEFAULT 'f',
+  expired_at TIMESTAMP,
   created_at TIMESTAMP,
   updated_at TIMESTAMP
 );

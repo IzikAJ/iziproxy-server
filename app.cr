@@ -14,10 +14,10 @@ host = "lvh.me"
 log = Logger.new(STDOUT)
 server = Server.new(log)
 # filters must be inserted from most common to specific one
-Kemal.config.add_filter_handler(Middleware::SessionHandler.new(ENV["SESSION_KEY"]))
-Kemal.config.add_filter_handler(Middleware::SubdomainMatcher.new(
+Kemal.config.add_filter_handler Middleware::SessionHandler.new(ENV["SESSION_KEY"])
+Kemal.config.add_filter_handler Middleware::SubdomainMatcher.new(
   host, "*.@", ProxySubdomainHandler.new(server)
-))
+)
 
 http_server = HttpServer.new(server)
 

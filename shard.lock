@@ -1,5 +1,13 @@
 version: 1.0
 shards:
+  callback:
+    github: mosop/callback
+    version: 0.6.3
+
+  cli:
+    github: mosop/cli
+    version: 0.6.10
+
   db:
     github: crystal-lang/crystal-db
     version: 0.4.3
@@ -7,10 +15,6 @@ shards:
   dotenv:
     github: gdotdesign/cr-dotenv
     version: 0.1.0
-
-  email:
-    github: arcage/crystal-email
-    version: 0.2.1
 
   granite_orm:
     github: amberframework/granite-orm
@@ -27,6 +31,10 @@ shards:
   micrate:
     github: juanedi/micrate
     version: 0.3.0
+
+  optarg:
+    github: mosop/optarg
+    version: 0.5.8
 
   pg:
     github: will/crystal-pg
@@ -51,4 +59,8 @@ shards:
   slang:
     github: jeromegn/slang
     version: 1.7.0
+
+  string_inflection:
+    github: mosop/string_inflection
+    version: 0.2.1
 

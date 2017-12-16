@@ -12,6 +12,7 @@ CREATE TABLE users (
 );
 CREATE UNIQUE INDEX uniq_user_emails ON users (LOWER(email));
 CREATE UNIQUE INDEX user_reset_password_token ON users (reset_password_token);
+
 -- +micrate Down
 -- SQL section 'Down' is executed when this migration is rolled back
 DROP INDEX uniq_user_emails;

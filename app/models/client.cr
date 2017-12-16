@@ -2,13 +2,25 @@ require "./base_model"
 require "./subdomain"
 
 class Client
-  getter :uuid, :socket, :subdomain
-
   SUBDOMAIN_SIZE = 10
+  AUTH_TIMEOUT   = 1.minute
+
+  getter uuid, socket, subdomain
+  property user : User?
+  property created_at : Time
+
+  def expired?
+    @user.nil? && @created_at < AUTH_TIMEOUT.ago
+  end
+
+  def authorized?
+    !@user.nil?
+  end
 
   def initialize(@server : Server, socket : TCPSocket)
     @uuid = SecureRandom.uuid
     @socket = socket
+    @created_at = Time.now
 
     register_subdomain(Subdomain.new(@uuid, random_subdomain))
   end

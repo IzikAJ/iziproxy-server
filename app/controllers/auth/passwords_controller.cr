@@ -6,10 +6,12 @@ module Auth
     property form : ApplicationForm = NewPasswordForm.new
 
     def new
+      redirect_if_authorized!
       render "app/views/auth/passwords/new.slim"
     end
 
     def create
+      redirect_if_authorized!
       form = NewPasswordForm.from_params(context.params)
       if form && form.valid? && (user = form.user)
         user.reset_password!
@@ -20,19 +22,20 @@ module Auth
     end
 
     def edit
+      redirect_if_authorized!
       form = UpdatePasswordForm.from_params(context.params)
       render "app/views/auth/passwords/edit.slim"
     end
 
     def update
+      redirect_if_authorized!
       form = UpdatePasswordForm.from_params(context.params)
       if form && form.valid? &&
          (session = context.request.session) &&
          (user = form.user)
         user.password = form.password
         user.save
-        session.user_id = user.id.not_nil!.to_i64
-        session.save
+        session.sign_in(user)
         redirect_to "/", 302
         return
       end

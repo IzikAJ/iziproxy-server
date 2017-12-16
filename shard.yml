@@ -23,6 +23,9 @@ dependencies:
   sendgrid:
     github: dlanileonardo/sendgrid.cr
 
+  optarg:
+    github: mosop/optarg
+
 development_dependencies:
   sentry-run:
     github: faustinoaq/sentry-run

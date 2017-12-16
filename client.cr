@@ -1,105 +1,56 @@
 # require "faraday"
-require "http/client"
-require "socket"
-require "json"
-require "base64"
-require "logger"
-require "./app/lib/utils/headers"
-# require "byebug"
+require "dotenv"
+require "./proxy_client/*"
+require "optarg"
 
-log = Logger.new(STDOUT)
-# log.level = Logger::WARN
-log.level = Logger::INFO
+Dotenv.load
 
-# conn = HTTP::Client.new "google.com"
-conn = HTTP::Client.new "localhost", 3001
+class ClientOptions < Optarg::Model
+  string "-p", default: "3000"
+  string "-s"
+  string "-d", default: "localhost"
 
-# host = "198.199.84.217"
-host = "localhost"
-subdomain = nil
+  VERSION = "1.0.0"
 
-loop do
-  begin
-    socket = TCPSocket.new(host, 9777)
-    log.info "Connection successful"
+  on("-v") { version }
+  on("--version") { version }
+  on("-h") { help }
+  on("--help") { help }
 
-    while subdomain.nil?
-      begin
-        req_namespace = JSON.build do |json|
-          json.object do
-            json.field :command do
-              json.object do
-                json.field :subdomain, "joy"
-              end
-            end
-          end
-        end
+  property port : String = "3000"
+  property domain : String = "localhost"
+  property subdomain : String?
 
-        socket.puts req_namespace
-        log.info "REQUEST SUBDOMAIN: #{req_namespace.inspect}"
+  def version
+    puts "version: #{VERSION}"
+    exit
+  end
 
-        while line = socket.gets
-          ans = JSON.parse line.chomp
-          log.info "...: #{ans.inspect}"
-          subdomain = ans["command"]["subdomain"]?
-          break unless subdomain.nil?
-        end
-      rescue e
-        log.error e.message
-      end
+  def help
+    puts "LocalProxy & ngrok alternative"
+    puts
+    puts "Available modifiers:"
+    puts "  -s - request preferred subdomain (default: empty - random)"
+    puts "  -p - set port for target local server (default: 3000)"
+    puts "  -d - set domain for target local server (default: localhost)"
+    puts
+    puts "  -v (--version) - show program version"
+    puts "  -h (--help)    - show this window"
+    exit
+  end
 
-      log.info "SUB: #{subdomain.inspect}"
-    end
+  def start!
+    @port = self.p if self.p?
+    @subdomain = self.s if self.s?
+    @domain = self.d if self.d?
 
-    log.info "MAIN LOOP READY #{subdomain}"
-    while line = socket.gets
-      begin
-        request = JSON.parse line.chomp
+    ENV["LOCAL_HOST"] = @domain
+    ENV["LOCAL_PORT"] = @port
+    ENV["REQUEST_SUBDOMAIN"] = @subdomain
 
-        method = request["method"].as_s.upcase
-        path = request["path"].as_s
-        headers = App::Utils::Headers.parse_json(request["headers"])
-        body = Base64.decode(request["body"].as_s)
-
-        log.info "REQ: #{method} #{path}"
-        log.info "HEADERS: #{headers.inspect}"
-        log.info "BODY: #{body}"
-
-        response = conn.exec(method, path, headers, body)
-        log.info "RESP (#{response.status_code})"
-        # log.info "RESP HEADERS (#{response.headers})"
-
-        resp = JSON.build do |json|
-          json.object do
-            json.field :request do
-              json.object do
-                json.field :id, request["id"].as_s
-              end
-            end
-            json.field :response do
-              json.object do
-                json.field :status, response.status_code
-                json.field :headers do
-                  App::Utils::Headers.build_json(json, response.headers)
-                end
-                json.field :body, Base64.encode(response.body)
-              end
-            end
-          end
-        end
-
-        # log.info "RESP JSON: #{resp.inspect}"
-
-        socket.puts resp
-      rescue e
-        log.error e.message
-      end
-    end
-    socket.close
-    subdomain = nil
-    log.info "socket closed"
-  rescue e
-    log.error e.message
-    sleep 0.1
+    ProxyClient::App.new
   end
 end
+
+# start app by recived args
+ClientOptions.parse(ARGV).start!

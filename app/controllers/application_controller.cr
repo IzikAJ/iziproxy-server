@@ -5,18 +5,6 @@ abstract class ApplicationController
   protected getter context : HTTP::Server::Context
   include ApplicationHelper
 
-  macro before_action(*methods, params = {} of String | Symbol => String | Symbol | Bool | Number)
-    def run_before!
-      {% for method in methods %}
-        return unless self.try(&.{{method.id}})
-      {% end %}
-    end
-
-    def initialize(@context)
-      run_before!
-    end
-  end
-
   def initialize(@context)
   end
 
@@ -45,9 +33,16 @@ abstract class ApplicationController
 
   protected def authorize_user! : Bool
     unless user_signed_in?
-      redirect_to "/login"
+      redirect_to "/auth/session/new"
       return false
     end
     return true
+  end
+
+  protected def redirect_if_authorized!(path : String = "/")
+    if user_signed_in?
+      redirect_to path
+      return
+    end
   end
 end

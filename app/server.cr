@@ -5,8 +5,6 @@ require "secure_random"
 require "base64"
 require "logger"
 #
-require "./command_parser"
-
 require "./models/client"
 require "./models/subdomain"
 #
