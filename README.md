@@ -29,7 +29,7 @@ run client (port 3001, requested subdomain - sample)
 ```
 
 ## TODO
-- server improvements
+### server improvements
  - log requests in db (for current session)
  - add 'replay request' function (available on log)
  - add detailed request preview (log)
@@ -37,7 +37,7 @@ run client (port 3001, requested subdomain - sample)
  - omniauth ?
  - add some css
 
-- client improvements
+### client improvements
  - remove .env file requirement
  - add commands to configure auth key
  - add commands to configure server address
