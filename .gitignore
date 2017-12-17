@@ -6,3 +6,4 @@
 /.shards
 /lib
 .icr_*
+.env
