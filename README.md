@@ -28,6 +28,16 @@ run client (port 3001, requested subdomain - sample)
 ./client -p 3001 -s sample
 ```
 
+other commands:
+
+```
+db/drop.sh - drop DB
+db/create.sh - create DB
+db/migrate.sh - run all migrations
+db/seed.sh - fill DB by initial data
+db/reset.sh - reset database & fill it
+```
+
 ## TODO
 ### server improvements
  - log requests in db (for current session)
