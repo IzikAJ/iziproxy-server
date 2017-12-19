@@ -31,6 +31,7 @@ run client (port 3001, requested subdomain - sample)
 other commands:
 
 ```
+micrate create ... - create new migration
 db/drop.sh - drop DB
 db/create.sh - create DB
 db/migrate.sh - run all migrations

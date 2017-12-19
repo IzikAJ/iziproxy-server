@@ -1,10 +1,12 @@
 require "./base_model"
 require "./subdomain"
+require "../proxy_server"
 
 class Client
   SUBDOMAIN_SIZE = 10
   AUTH_TIMEOUT   = 1.minute
 
+  getter server : ProxyServer = ProxyServer.instance
   getter uuid, socket, subdomain
   property user : User?
   property created_at : Time
@@ -17,7 +19,7 @@ class Client
     !@user.nil?
   end
 
-  def initialize(@server : Server, socket : TCPSocket)
+  def initialize(socket : TCPSocket)
     @uuid = SecureRandom.uuid
     @socket = socket
     @created_at = Time.now

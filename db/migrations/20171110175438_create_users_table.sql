@@ -6,6 +6,7 @@ CREATE TABLE users (
   encrypted_password VARCHAR(500) NOT NULL,
   reset_password_token VARCHAR(100) UNIQUE,
   name VARCHAR(100),
+  log_requests BOOLEAN DEFAULT FALSE,
   last_login_at TIMESTAMP,
   created_at TIMESTAMP,
   updated_at TIMESTAMP

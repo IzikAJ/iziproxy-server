@@ -1,9 +1,10 @@
 require "socket"
 require "json"
-require "logger"
 require "./commands/hub"
 #
 require "./models/client"
+require "./proxy_server"
+require "./app_logger"
 
 # client flow:
 # 1 - connect
@@ -19,35 +20,44 @@ require "./models/client"
 # connection closed - go to step 1
 
 class TcpServer
-  getter :app, :log, :server, :port
-  property :commander
+  getter app : ProxyServer = ProxyServer.instance
+  getter server : TCPServer?
 
-  def initialize(@app : Server, @log : Logger)
-    Commands::Hub.configure! do |hub|
-      hub.app = @app
-      hub.log = @log
+  def self.instance
+    @@instance ||= new
+  end
+
+  def self.run
+    self.instance.run
+  end
+
+  def initialize
+  end
+
+  def save_response!(resp : JSON::Any)
+    if item = RequestItem.find_by(:uuid, resp["request"]["id"].as_s)
+      item.status_code = resp["response"]["status"].as_i
+      item.response = resp["response"]["headers"].as_s
+      item.save
     end
   end
 
-  def port=(port : Int32)
-    @port = port
-  end
+  def run
+    AppLogger.warn "BIND TO PORT: #{app.http_port}"
+    @server = TCPServer.new(app.tcp_port)
 
-  def start
-    @log.warn "BIND TO PORT: #{@port}"
-    @server = TCPServer.new(@port.as(Int))
     spawn do
-      if server = @server
+      if _server = server
         loop do
-          if socket = server.accept?
-            @log.warn "handle the client in a fiber"
+          if socket = _server.accept?
+            AppLogger.warn "handle the client in a fiber"
             spawn do
               if _socket = socket
-                client = Client.new(@app, _socket)
+                client = Client.new(_socket)
 
                 @app.clients[client.uuid] = client
-                @log.info "CONNECTION: ESTABLISH #{client}"
-                @log.warn "CLIENT ID: #{client.uuid}"
+                AppLogger.info "CONNECTION: ESTABLISH #{client}"
+                AppLogger.warn "CLIENT ID: #{client.uuid}"
 
                 while line = _socket.gets
                   response_pack = JSON.parse line
@@ -58,16 +68,17 @@ class TcpServer
                     Commands::Hub.call(_socket, client, command)
                   elsif client.authorized? && response_pack["request"]?
                     @app.responses[response_pack["request"]["id"]] = response_pack
+                    save_response! response_pack
                   end
                 end
 
-                @log.info "CONNECTION: CLOSE #{client}"
+                AppLogger.info "CONNECTION: CLOSE #{client}"
                 @app.subdomains.delete client.subdomain.try(&.namespace) if client.subdomain
                 @app.clients.delete client.uuid
               end
             end
           else
-            @log.warn "another fiber closed the server"
+            AppLogger.warn "another fiber closed the server"
             break
           end
         end

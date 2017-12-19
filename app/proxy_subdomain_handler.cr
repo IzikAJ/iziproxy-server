@@ -1,19 +1,18 @@
 require "http/server"
 require "json"
-require "logger"
 require "secure_random"
 require "base64"
 #
 require "./lib/engine"
+require "./models/request_item"
+require "./app_logger"
 
 class ProxySubdomainHandler
   include HTTP::Handler
 
-  property log
-  getter log : Logger
+  getter app : ProxyServer = ProxyServer.instance
 
-  def initialize(@app : Server)
-    @log = @app.log
+  def initialize
   end
 
   def call(env : HTTP::Server::Context)
@@ -21,18 +20,18 @@ class ProxySubdomainHandler
 
     return call_next(env) if subdomain.nil?
 
-    if !@app.subdomains[subdomain]?
-      @log.error "Subdomain \"#{subdomain}\" not available #{@app.subdomains.keys.inspect}"
+    if !app.subdomains[subdomain]?
+      AppLogger.error "Subdomain \"#{subdomain}\" not available #{app.subdomains.keys.inspect}"
       return call_next(env)
     end
 
-    client_id = @app.subdomains[subdomain].client_id
-    if @app.clients[client_id]?.nil?
-      @log.error "Client not available"
+    client_id = app.subdomains[subdomain].client_id
+    if app.clients[client_id]?.nil?
+      AppLogger.error "Client not available"
       return call_next(env)
     end
 
-    @log.info "Client: #{client_id}(#{!@app.clients[client_id].nil?})"
+    AppLogger.info "Client: #{client_id}(#{!app.clients[client_id].nil?})"
 
     id = SecureRandom.uuid
 
@@ -48,12 +47,23 @@ class ProxySubdomainHandler
       end
     end
 
-    @log.info "#{id} #{subdomain}"
+    AppLogger.info "#{id} #{subdomain}"
 
-    @app.clients[client_id].socket.puts req
+    if (user = app.clients[client_id].user) && !user.id.nil? && user.log_requests
+      req_item = RequestItem.new(
+        uuid: id,
+        client_uuid: client_id,
+        request: req.to_s,
+        user_id: user.id.not_nil!.to_i64
+      )
+      req_item.save
+      puts "??????????? #{req_item.inspect} <<<<< #{client_id} >>>>>>"
+    end
+
+    app.clients[client_id].socket.puts req
 
     i = 0
-    while !@app.responses.has_key?(id)
+    while !app.responses.has_key?(id)
       sleep 0.05
       i += 1
       if i > 2000
@@ -62,7 +72,7 @@ class ProxySubdomainHandler
       end
     end
 
-    response = @app.responses[id]["response"]
+    response = app.responses[id]["response"]
 
     env.response.status_code = response["status"].as_i
     env.response.headers.merge! App::Utils::Headers.parse_json(response["headers"])

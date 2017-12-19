@@ -1,21 +1,22 @@
 require "json"
 
 module Commands
+  alias CommandsHash = Hash(String, TcpCommand.class)
+
   class Hub
     INSTANCE = self.new
-    property? commands : Hash(String, TcpCommand.class) = {} of String => TcpCommand.class
+    getter commands : CommandsHash = CommandsHash.new
 
-    property app : Server?
-    property log : Logger?
+    getter app : ProxyServer = ProxyServer.instance
 
     def register(cmd : String, command : TcpCommand.class)
-      commands?[cmd] = command
+      commands[cmd] = command
     end
 
     def call(socket : Socket, client : Client, command : JSON::Any)
       kind = command["kind"]
-      return unless commands?.has_key?(kind.as_s)
-      commands?[kind.as_s].new(socket, client, command)
+      return unless commands.has_key?(kind.as_s)
+      commands[kind.as_s].new(socket, client, command)
     end
 
     def self.register(cmd : String, command : TcpCommand.class)
@@ -27,10 +28,10 @@ module Commands
     end
 
     def self.commands
-      INSTANCE.commands?
+      INSTANCE.commands
     end
 
-    def self.configure!
+    def self.configure
       yield INSTANCE
     end
 

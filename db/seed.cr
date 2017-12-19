@@ -9,6 +9,7 @@ User.clear
 ].each do |mail|
   pass = ENV["ENV"] == "development" ? "1" * 8 : SecureRandom.hex(16)
   user = User.build(email: mail, password: pass)
+  user.log_requests = true
   if user.save
     puts "USER: #{mail}, #{pass}"
     auth = AuthToken.new(user_id: user.id)

@@ -1,5 +1,5 @@
 require "kemal"
-require "./server"
+require "./proxy_server"
 require "./controllers/*"
 require "./controllers/auth/*"
 require "./lib/utils/pretty_routes"
@@ -7,18 +7,20 @@ require "./lib/utils/pretty_routes"
 class HttpServer
   include PrettyRoutes
 
-  getter app : Server
-  getter log : Logger
-
   property :commander
 
-  def initialize(@app : Server)
-    @log = @app.not_nil!.log
-    # @commander = CommandParser.new(@app, @log)
-    draw_routes!
+  def self.instance
+    @@instance ||= new
   end
 
-  private def draw_routes!
+  def initialize
+  end
+
+  def self.run
+    self.instance.draw_routes!
+  end
+
+  def draw_routes!
     # Kemal::RouteHandler.INSTANCE
 
     # root page

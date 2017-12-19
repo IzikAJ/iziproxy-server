@@ -1,26 +1,16 @@
 require "json"
+require "../../proxy_server"
+require "../../app_logger"
 
 abstract class TcpCommand
   property socket : Socket
   property client : Client
   property command : JSON::Any
 
-  macro safe_delegate(method, target)
-    def {{method}}(*args, **xargs)
-      {{target}}.not_nil!.{{method}}(*args, **xargs) unless {{target}}.nil?
-    end
-  end
-
-  safe_delegate error, Commands::Hub::INSTANCE.log
-  safe_delegate warn, Commands::Hub::INSTANCE.log
-  safe_delegate info, Commands::Hub::INSTANCE.log
+  delegate error, warn, info, to: AppLogger
 
   def app
-    Commands::Hub::INSTANCE.app.not_nil!
-  end
-
-  def log
-    Commands::Hub::INSTANCE.log
+    ProxyServer.instance
   end
 
   def send_error!(code : Symbol | String, message : String)

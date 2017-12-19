@@ -56,7 +56,7 @@ module ProxyClient
     end
 
     def request_namespace!(socket : TCPSocket, namespace : String?)
-      return if !subdomain.nil? && subdomain == namespace
+      # return if !subdomain.nil? && subdomain == namespace
       begin
         sender.send socket, :subdomain do |json|
           json.field :subdomain, namespace.to_s

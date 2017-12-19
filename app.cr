@@ -6,20 +6,23 @@ require "./app/*"
 
 Dotenv.load
 
-log = Logger.new(STDOUT)
-log.level = Logger::INFO
+AppLogger.configure do |conf|
+  conf.logger = Logger.new(STDOUT)
+  conf.logger.level = Logger::INFO
+end
 
-host = "lvh.me"
+ProxyServer.configure do |conf|
+  conf.http_port = ENV["HTTP_PORT"].to_i
+  conf.tcp_port = ENV["TCP_PORT"].to_i
+  conf.host = ENV["HOST"]
+end
 
-log = Logger.new(STDOUT)
-server = Server.new(log)
 # filters must be inserted from most common to specific one
 Kemal.config.add_filter_handler Middleware::SessionHandler.new(ENV["SESSION_KEY"])
 Kemal.config.add_filter_handler Middleware::SubdomainMatcher.new(
-  host, "*.@", ProxySubdomainHandler.new(server)
+  ENV["HOST"], "*.@", ProxySubdomainHandler.new
 )
 
-http_server = HttpServer.new(server)
-
-server.start
+HttpServer.run
+TcpServer.run
 Kemal.run
