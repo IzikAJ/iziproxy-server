@@ -1,3 +1,4 @@
+require "../queries/session_query"
 require "../models/*"
 
 module Middleware
@@ -28,10 +29,7 @@ module Middleware
       if session_token.nil?
         write_session_cookies(env)
       else
-        session = Session.first(
-          "WHERE token = ? AND expired_at > ?",
-          [session_token, Time.now]
-        )
+        session = SessionQuery.new.find(session_token)
         if session.nil?
           write_session_cookies(env)
         else

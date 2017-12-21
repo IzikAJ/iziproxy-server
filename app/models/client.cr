@@ -7,7 +7,8 @@ class Client
   AUTH_TIMEOUT   = 1.minute
 
   getter server : ProxyServer = ProxyServer.instance
-  getter uuid, socket, subdomain
+  getter uuid, socket
+  getter subdomain : Subdomain
   property user : User?
   property created_at : Time
 
@@ -19,18 +20,27 @@ class Client
     !@user.nil?
   end
 
+  def log_requests?
+    user && user.not_nil!.log_requests
+  end
+
   def initialize(socket : TCPSocket)
     @uuid = SecureRandom.uuid
+    @subdomain = Subdomain.new(@uuid, random_subdomain)
     @socket = socket
     @created_at = Time.now
 
-    register_subdomain(Subdomain.new(@uuid, random_subdomain))
+    register_subdomain(@subdomain)
+  end
+
+  def free_subdomain!(subdomain : Subdomain)
+    server.subdomains.delete subdomain.namespace
   end
 
   def register_subdomain(subdomain : Subdomain)
     if server = @server
       if curr_subdomain = @subdomain
-        server.subdomains.delete curr_subdomain.namespace
+        free_subdomain! curr_subdomain
       end
       server.subdomains[subdomain.namespace] = subdomain
       @subdomain = subdomain

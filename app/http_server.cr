@@ -13,9 +13,6 @@ class HttpServer
     @@instance ||= new
   end
 
-  def initialize
-  end
-
   def self.run
     self.instance.draw_routes!
   end

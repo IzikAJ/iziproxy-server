@@ -2,6 +2,7 @@ require "kemal"
 require "dotenv"
 require "./app/lib/engine"
 require "./app/middleware/*"
+require "./app/queries/*"
 require "./app/*"
 
 Dotenv.load
@@ -20,7 +21,7 @@ end
 # filters must be inserted from most common to specific one
 Kemal.config.add_filter_handler Middleware::SessionHandler.new(ENV["SESSION_KEY"])
 Kemal.config.add_filter_handler Middleware::SubdomainMatcher.new(
-  ENV["HOST"], "*.@", ProxySubdomainHandler.new
+  ENV["HOST"], "*.@", SubdomainHandler.new
 )
 
 HttpServer.run

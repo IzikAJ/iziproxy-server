@@ -7,13 +7,10 @@ require "./lib/engine"
 require "./models/request_item"
 require "./app_logger"
 
-class ProxySubdomainHandler
+class SubdomainHandler
   include HTTP::Handler
 
   getter app : ProxyServer = ProxyServer.instance
-
-  def initialize
-  end
 
   def call(env : HTTP::Server::Context)
     subdomain = env.request.try &.subdomain
@@ -47,8 +44,6 @@ class ProxySubdomainHandler
       end
     end
 
-    AppLogger.info "#{id} #{subdomain}"
-
     if (user = app.clients[client_id].user) && !user.id.nil? && user.log_requests
       req_item = RequestItem.new(
         uuid: id,
@@ -57,7 +52,6 @@ class ProxySubdomainHandler
         user_id: user.id.not_nil!.to_i64
       )
       req_item.save
-      puts "??????????? #{req_item.inspect} <<<<< #{client_id} >>>>>>"
     end
 
     app.clients[client_id].socket.puts req

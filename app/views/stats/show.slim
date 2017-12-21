@@ -45,3 +45,7 @@ h3 YEAH!!!
           b expired?:
           = token.expired_at.as(Time) < Time.now
 
+  h3 log:
+  ul
+    - RequestsQuery.new(current_user.not_nil!).list.each do |item|
+      li = item.inspect
