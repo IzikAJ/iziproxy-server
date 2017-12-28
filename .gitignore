@@ -7,3 +7,5 @@
 /lib
 .icr_*
 .env
+node_modules
+/logs/*

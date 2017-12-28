@@ -39,18 +39,39 @@ module ProxyClient
       socket.puts resp
     end
 
+    def get_resp(method, path, headers, body, deep = 0)
+      begin
+        return connection.exec(method, path, headers, body)
+      rescue e
+        if deep > 5
+          puts "!!!!!!!!!!!!!!!!!!!!!"
+          puts "!!!     WTF???    !!!"
+          puts "!!!!!!!!!!!!!!!!!!!!!"
+          puts e.inspect
+          return HTTP::Client::Response.new(500, "SORRY")
+        else
+          @connection = HTTP::Client.new(host, port)
+          return get_resp(method, path, headers, body, deep + 1)
+        end
+      end
+    end
+
     def process(socket : TCPSocket, line : String)
       begin
+        puts "____ before parse"
         request = JSON.parse line.chomp
+        puts "____ after parse"
 
         method = request["method"].as_s.upcase
         path = request["path"].as_s
         headers = ::App::Utils::Headers.parse_json(request["headers"])
-        body = Base64.decode(request["body"].as_s)
+        body = Base64.decode(request["body"].as_s) if request["body"]?
 
         started_at = Time.now
 
-        response = connection.exec(method, path, headers, body)
+        puts "____ before exec"
+        response = get_resp(method, path, headers, body)
+        puts "____ after exec"
 
         print "[#{started_at.to_s}] "
         print "(#{response.status_code}) "
@@ -58,9 +79,11 @@ module ProxyClient
         print "-> in #{(Time.now - started_at).total_milliseconds}ms "
         puts ""
 
+        puts "____ before send"
         send_results socket, request, response
+        puts "____ after send"
       rescue e
-        log.error e.message
+        log.error "PIPE ERROR #{e.message}"
       end
     end
   end

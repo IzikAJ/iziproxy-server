@@ -28,7 +28,32 @@ run client (port 3001, requested subdomain - sample)
 ./client -p 3001 -s sample
 ```
 
-other commands:
+### dev nginx
+
+#### install
+
+```
+brew tap denji/nginx
+brew unlink nginx
+brew install nginx-full --with-stream
+```
+
+#### usage
+
+start
+```
+nginx -c ~/www/sparse/iziproxy/nginx.conf
+```
+reload
+```
+nginx -s reload -c ~/www/sparse/iziproxy/nginx.conf
+```
+quit
+```
+nginx -s quit -c ~/www/sparse/iziproxy/nginx.conf
+```
+
+### other commands:
 
 ```
 micrate create ... - create new migration

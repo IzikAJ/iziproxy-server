@@ -3,6 +3,7 @@ require "./proxy_server"
 require "./controllers/*"
 require "./controllers/auth/*"
 require "./lib/utils/pretty_routes"
+require "./api/core"
 
 class HttpServer
   include PrettyRoutes
@@ -15,6 +16,8 @@ class HttpServer
 
   def self.run
     self.instance.draw_routes!
+
+    Api::Core.draw_routes!
   end
 
   def draw_routes!

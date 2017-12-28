@@ -51,7 +51,7 @@ module ProxyClient
           @authorized = error.nil? && !resp.nil?
         end
       rescue e
-        log.error e.message
+        log.error "AUTHORIZE ERROR #{e.message}"
       end
     end
 
@@ -70,7 +70,7 @@ module ProxyClient
           end
         end
       rescue e
-        log.error e.message
+        log.error "NAMESPACE ERROR #{e.message}"
       end
 
       log.warn "SUBDOMAIN REGISTERED: #{subdomain.inspect}"
@@ -109,7 +109,7 @@ module ProxyClient
 
           log.warn "SOCKET CLOSED"
         rescue e
-          log.error e.message
+          log.error "CONNECTION ERROR #{e.message}"
           sleep 1.second
         end
       end

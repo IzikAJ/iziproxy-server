@@ -36,11 +36,13 @@ class SubdomainHandler
       json.object do
         json.field :id, id
         json.field :method, env.request.method
-        json.field :path, env.request.path
+        json.field :path, [env.request.path, env.request.query].reject(&.nil?).join("?")
         json.field :headers do
           App::Utils::Headers.build_json(json, env.request.headers)
         end
-        json.field :body, Base64.encode(env.request.body.to_s)
+        if body = env.request.body
+          json.field :body, Base64.encode(body.gets_to_end)
+        end
       end
     end
 
@@ -56,11 +58,15 @@ class SubdomainHandler
 
     app.clients[client_id].socket.puts req
 
-    i = 0
+    timeout = 60.seconds.from_now
+    if (hdr = env.request.headers["Content-Type"]?) &&
+       (hdr =~ /^multipart\/form-data/)
+      timeout = 10.minutes.from_now
+    end
+
     while !app.responses.has_key?(id)
       sleep 0.05
-      i += 1
-      if i > 2000
+      if Time.now > timeout
         env.response.status_code = 408
         env.response.print "Timeout"
       end
