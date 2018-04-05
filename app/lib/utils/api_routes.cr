@@ -1,7 +1,7 @@
 require "./pretty_routes"
 
 module ApiRoutes
-  {% for method in ["get", "post", "put", "patch"] %}
+  {% for method in ["get", "post", "put", "patch", "delete", "option"] %}
     macro {{method.id}}(path, resolver)
       {{method.id}} "/api/\{{path.id}}.json" do |env|
         \{% ctrl_params = ("api/" + resolver).split('#') %}

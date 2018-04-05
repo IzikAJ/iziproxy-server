@@ -29,6 +29,11 @@ class Session < Granite::ORM::Base
     user.save
   end
 
+  def expire!
+    @expired_at = 1.second.ago
+    save
+  end
+
   def update_expiration_time!
     @expired_at = EXPIRE_TIMEOUT.from_now
     save

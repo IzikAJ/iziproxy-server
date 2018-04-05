@@ -26,6 +26,8 @@ module Active
       case key
       when "email"
         "invalid"
+      when "present"
+        "blank"
       else
         key
       end

@@ -4,7 +4,7 @@ module Active
       BLANK_REGEX = /^\s*$/
 
       protected def blank?(key : String)
-        self[key].nil? || self[key] =~ BLANK_REGEX
+        self[key].nil? || self[key].to_s =~ BLANK_REGEX
       end
 
       protected def blank?(key : Symbol)

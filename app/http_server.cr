@@ -3,7 +3,7 @@ require "./proxy_server"
 require "./controllers/*"
 require "./controllers/auth/*"
 require "./lib/utils/pretty_routes"
-require "./api/core"
+require "../api/core"
 
 class HttpServer
   include PrettyRoutes

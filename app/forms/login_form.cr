@@ -8,7 +8,7 @@ class LoginForm < ApplicationForm
   accesible email, password
 
   def fetch_param(params : Kemal::ParamParser, key : String)
-    params.body.fetch("user[#{key}]", nil)
+    params.body.fetch("user[#{key}]", params.body.fetch(key, nil))
   end
 
   def self.from_params(params : Kemal::ParamParser) : LoginForm

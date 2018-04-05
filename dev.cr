@@ -6,6 +6,7 @@ process = Sentry.config(
   run_command: "./.bin/app",
   files: [
     "app.cr",
+    "api/**/*.cr", "api/**/*.ecr",
     "app/**/*.cr", "app/**/*.ecr",
     "app/**/*.slang", "app/**/*.slim",
     "config/**/*.cr", "config/**/*.ecr",
@@ -13,4 +14,5 @@ process = Sentry.config(
   build_args: ["build", "app.cr", "-o", ".bin/app"],
   run_args: ["-p", "9000"])
 
-Sentry.run(process) do end
+Sentry.run(process) do
+end
