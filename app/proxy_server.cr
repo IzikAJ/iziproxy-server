@@ -1,7 +1,7 @@
 require "socket"
 require "http/server"
 require "json"
-require "secure_random"
+# require "secure_random"
 require "base64"
 #
 require "./models/client"

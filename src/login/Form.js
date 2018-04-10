@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import axios from 'axios';
 import {
   Redirect
 } from 'react-router-dom'
 import './Form.css';
-import DisplayErrors from '../utils/DisplayErrors.js';
-import { User } from '../models/user';
+import DisplayErrors from '../_utils/DisplayErrors.js';
+import { User } from '../_models/user';
+import { Api } from '../_utils/api';
 
 export class Form extends Component {
   constructor(props) {
@@ -43,14 +43,14 @@ export class Form extends Component {
 
   sendData() {
     this.setState({loading: true});
-    axios.post('/api/session.json', {
+    Api.session.create({
       email: this.state.email,
       password: this.state.password,
     }).then(res => {
       console.log('sendData', res);
       this.user.token = res.token;
 
-      axios.get('/api/session.json').then(session => {
+      Api.session.show().then(session => {
         const user = (session.user && session.user.id) ? session.user : null;
         this.setState({
           loading: false,

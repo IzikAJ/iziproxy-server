@@ -1,4 +1,4 @@
-require "../../app/models/session"
+require "../../models/session"
 
 class HTTP::Request
   # add subdomain to request

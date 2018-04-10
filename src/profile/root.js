@@ -1,27 +1,26 @@
 import React, { Component } from 'react';
 
 import {
-  Route,
-  Switch,
-  Link,
+  Route, Switch, Link,
 } from 'react-router-dom'
 
-import { User } from './models/user';
-import { Show } from './profile/show';
-import { Edit } from './profile/edit';
+import { User } from '../_models/user';
+import { Show } from './show';
+import { Edit } from './edit';
 
-export class Profile extends Component {
+export class Root extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       loading: true
     };
-  }
 
-  componentDidMount() {
-    User.active.subscribe(user => {
-      this.setState({user});
+    User.hook(this, user => {
+      this.setState({
+        user,
+        loading: false
+      });
     });
   }
 
@@ -53,5 +52,3 @@ export class Profile extends Component {
     );
   }
 }
-
-export default Profile;

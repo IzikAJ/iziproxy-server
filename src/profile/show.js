@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ServerLog } from './stats/server-log';
-import { User } from '../models/user';
+import { User } from '../_models/user';
 
 export class Show extends Component {
   constructor(props) {

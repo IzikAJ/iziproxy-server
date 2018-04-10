@@ -4,9 +4,9 @@ class RequestItem < Granite::ORM::Base
   include BaseModel
   adapter pg
   table_name request_items
-  primary id : Int32 | Int64
+  primary id : Int32
 
-  field user_id : Int32 | Int64
+  field user_id : Int32
   field uuid : String
   field client_uuid : String
   field request : String

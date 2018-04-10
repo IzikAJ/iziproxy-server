@@ -1,8 +1,8 @@
 -- +micrate Up
 -- SQL in section 'Up' is executed when this migration is applied
 CREATE TABLE sessions (
-  id SERIAL UNIQUE,
-  user_id BIGINT,
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGSERIAL,
   token VARCHAR(256) NOT NULL,
   remote_ip INET,
   expired_at TIMESTAMP,

@@ -1,5 +1,5 @@
 require "./base_model"
-require "secure_random"
+# require "secure_random"
 
 class Session < Granite::ORM::Base
   include BaseModel
@@ -8,8 +8,8 @@ class Session < Granite::ORM::Base
   adapter pg
   table_name sessions
 
-  primary id : Int32 | Int64
-  field user_id : Int32 | Int64 | Nil
+  primary id : Int32
+  field user_id : Int32 | Nil
   field token : String
   field expired_at : Time
   timestamps
@@ -40,6 +40,6 @@ class Session < Granite::ORM::Base
   end
 
   protected def generate_token
-    @token ||= SecureRandom.hex(128)
+    @token ||= Random::Secure.hex(128)
   end
 end

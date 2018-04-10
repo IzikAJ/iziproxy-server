@@ -19,6 +19,12 @@ class AuthCommand < TcpCommand
     end
 
     client.user = auth.not_nil!.user
+    if user = client.user
+      user.clients << client
+
+      puts "REGISTER CLIENT #{client.inspect} to USER #{user.inspect}"
+    end
+
     respond!
   end
 

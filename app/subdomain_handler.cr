@@ -1,7 +1,8 @@
 require "http/server"
 require "json"
-require "secure_random"
+# require "secure_random"
 require "base64"
+require "uuid"
 #
 require "./lib/engine"
 require "./models/request_item"
@@ -30,7 +31,7 @@ class SubdomainHandler
 
     AppLogger.info "Client: #{client_id}(#{!app.clients[client_id].nil?})"
 
-    id = SecureRandom.uuid
+    id = UUID.random.to_s
 
     req = JSON.build do |json|
       json.object do

@@ -1,13 +1,15 @@
 require "./base_model"
 require "./subdomain"
 require "../proxy_server"
+require "uuid"
 
 class Client
   SUBDOMAIN_SIZE = 10
   AUTH_TIMEOUT   = 1.minute
 
   getter server : ProxyServer = ProxyServer.instance
-  getter uuid, socket
+  getter uuid : String
+  getter socket
   getter subdomain : Subdomain
   property user : User?
   property created_at : Time
@@ -25,7 +27,7 @@ class Client
   end
 
   def initialize(socket : TCPSocket)
-    @uuid = SecureRandom.uuid
+    @uuid = UUID.random.to_s
     @subdomain = Subdomain.new(@uuid, random_subdomain)
     @socket = socket
     @created_at = Time.now
@@ -48,6 +50,6 @@ class Client
   end
 
   def random_subdomain
-    SecureRandom.urlsafe_base64.downcase[0..SUBDOMAIN_SIZE]
+    Random::Secure.urlsafe_base64.downcase[0..SUBDOMAIN_SIZE]
   end
 end

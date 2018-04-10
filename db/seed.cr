@@ -1,13 +1,12 @@
 require "../config/db"
 require "../app/models/*"
-require "secure_random"
 
 AuthToken.clear
 User.clear
 [
   "izikaj@gmail.com",
 ].each do |mail|
-  pass = ENV["ENV"] == "development" ? "1" * 8 : SecureRandom.hex(16)
+  pass = ENV["ENV"] == "development" ? "1" * 8 : Random::Secure.hex(16)
   user = User.build(email: mail, password: pass)
   user.log_requests = true
   if user.save

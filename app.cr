@@ -25,5 +25,6 @@ Kemal.config.add_filter_handler Middleware::SubdomainMatcher.new(
 )
 
 HttpServer.run
+SocketServer.run
 TcpServer.run
 Kemal.run

@@ -20,5 +20,3 @@ export class PageNotFound extends Component {
     );
   }
 }
-
-export default PageNotFound;

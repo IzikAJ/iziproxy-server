@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import axios from 'axios';
-import { User } from '../models/user';
-
-import { DisplayErrors } from '../utils/DisplayErrors.js';
+import { User } from '../_models/user';
+import { Api } from '../_utils/api';
+import { DisplayErrors } from '../_utils/DisplayErrors.js';
 
 export class Edit extends Component {
   constructor(props) {
@@ -47,7 +46,7 @@ export class Edit extends Component {
 
   sendData() {
     this.setState({loading: true});
-    axios.post('/api/profile.json', {
+    Api.profile.update({
       name: this.state.user.name,
       email: this.state.user.email,
       password: this.state.user.password,

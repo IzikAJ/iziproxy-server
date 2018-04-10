@@ -1,4 +1,4 @@
-require "../config/db"
+require "../../config/db"
 require "json"
 require "db"
 # require "granite_orm"

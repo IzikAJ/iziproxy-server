@@ -1,13 +1,16 @@
-import axios from 'axios';
-import { SubjectStore } from '../utils/subject_store';
+import { SubjectStore } from '../_utils/subject_store';
 import cookie from 'cocookie';
+import { Api } from '../_utils/api';
+
+const USER_DATA_STORE_KEY = '__current_user__';
+const COOKIE_STORE_KEY = '_user_token';
 
 export class User {
   set token(token) {
     console.log('User.token', token)
     this._token = token;
 
-    cookie('_user_token').set(token, {
+    cookie(COOKIE_STORE_KEY).set(token, {
       maxAge: 60 * 60 * 24 * 30 // 30 days to die
     });
     this.loadProfile();
@@ -16,11 +19,10 @@ export class User {
   }
 
   static get instance() {
-    if ('_current_user' in window) {
-      return window['_current_user'];
+    if (this.current_user) {
+      return this.current_user;
     }
-    const user = new User();
-    return window['_current_user'] = user;
+    return this.current_user = new User();
   }
 
   static get active() {
@@ -30,7 +32,7 @@ export class User {
   loadProfile() {
     if (this._loading) { return; }
     this._loading = true;
-    axios.get('/api/profile.json').then(data => {
+    Api.profile.show().then(data => {
       console.log('RELOAD PROFILE', data);
       this._subject.next({
         token: this._token,
@@ -40,17 +42,23 @@ export class User {
     }).catch(err => {
       this._loading = false;
     });
+
+    Api.servers.list().then(data => {
+      console.log('SERVERS', data);
+    }).catch(err => {
+      console.log('SERVERS FAILED');
+    });
   }
 
   static hook(context, callback) {
-    return SubjectStore.hook(context, '__current_user__', callback);
+    return SubjectStore.hook(context, USER_DATA_STORE_KEY, callback);
   }
 
   constructor() {
     console.log('INIT USER!');
     // this._subject = new ReplaySubject(1);
-    this._subject = SubjectStore.sync('__current_user__');
-    this._token = cookie('_user_token').get();
+    this._subject = SubjectStore.sync(USER_DATA_STORE_KEY);
+    this._token = cookie(COOKIE_STORE_KEY).get();
     this.loadProfile();
   }
 }

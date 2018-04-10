@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-class ApiConfig {
+export class ApiConfig {
   constructor() {
     // axios.defaults.baseURL = 'https://api.example.com';
     // axios.defaults.headers.common['Authorization'] = AUTH_TOKEN;
@@ -35,5 +35,3 @@ class ApiConfig {
     });
   }
 }
-
-export default ApiConfig;

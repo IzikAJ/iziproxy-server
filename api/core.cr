@@ -10,6 +10,8 @@ module Api
       post "session", "session#create"
       delete "session", "session#destroy"
 
+      get "servers", "servers#index"
+
       get "profile", "profile#show"
       post "profile", "profile#update"
     end

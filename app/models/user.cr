@@ -1,5 +1,5 @@
 require "crypto/bcrypt/password"
-require "secure_random"
+# require "secure_random"
 
 require "./base_model"
 require "../mailers/user_mailer"
@@ -8,7 +8,7 @@ class User < Granite::ORM::Base
   include BaseModel
   adapter pg
   table_name users
-  primary id : Int64 | Int32
+  primary id : Int32
   field name : String
   field email : String
   field encrypted_password : String
@@ -16,6 +16,8 @@ class User < Granite::ORM::Base
   field reset_password_token : String
   field last_login_at : Time
   timestamps
+
+  getter clients = [] of Client
 
   has_many :auth_tokens
   has_many :sessions
@@ -29,7 +31,7 @@ class User < Granite::ORM::Base
 
   def self.build(args : Hash(Symbol | String, String | JSON::Type)) : User
     user = self.new(args)
-    user.password = args[:password] || args["password"] || SecureRandom.base64
+    user.password = args[:password] || args["password"] || Random::Secure.base64
     user
   end
 
@@ -50,7 +52,7 @@ class User < Granite::ORM::Base
   end
 
   def reset_password!
-    @reset_password_token = SecureRandom.hex(16)
+    @reset_password_token = Random::Secure.hex(16)
     UserMailer.new(self).restore_password_instructions! if save
   end
 end

@@ -36,6 +36,7 @@ module Api
         email:        user.email,
         log_requests: user.log_requests,
         created_at:   user.created_at,
+        tokens:       user.auth_tokens.to_s,
       }.to_json
     end
   end

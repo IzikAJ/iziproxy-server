@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 // import logo from './logo.svg';
 import './App.css';
-import { WelcomePage } from './WelcomePage.js';
+import { Root as Welcome } from './welcome/root';
 import { Form as LoginForm } from './login/Form.js';
-import { Profile as ProfileForm } from './Profile.js';
-import { PageNotFound } from './PageNotFound.js';
-import ApiConfig from './utils/api_config';
-import axios from 'axios';
+import { Root as Profile } from './profile/root';
+import { PageNotFound } from './shared/page-not-found';
+import { Api } from './_utils/api';
+import { User } from './_models/user';
 
 import {
   Route,
@@ -14,21 +14,21 @@ import {
   Redirect
 } from 'react-router-dom'
 
-class App extends Component {
+export class App extends Component {
   constructor(props) {
     super(props);
 
+    this.user = User.instance;
     this.authLoading = true;
     this.state = {
       data: {},
-      apiConfig: new ApiConfig()
     };
 
     this.logOut = this.logOut.bind(this);
   }
 
   logOut() {
-    axios.delete('/api/session.json').then(session => {
+    Api.session.destroy().then(session => {
       this.onCurrUserUpdate(null, {session});
     });
   }
@@ -45,7 +45,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    axios.get('/api/session.json').then(session => {
+    Api.session.show().then(session => {
       this.authLoading = false;
       const user = (session.user && session.user.id) ? session.user : null;
       this.onCurrUserUpdate(user, {session});
@@ -70,7 +70,7 @@ class App extends Component {
       <div>
         <span>Hello {user.name || user.email || 'User'}</span>
         <button onClick={ this.logOut }>Log out</button>
-        <ProfileForm />
+        <Profile />
       </div>
     );
   }
@@ -113,9 +113,7 @@ class App extends Component {
           <Route
             exact
             path="/"
-            render={
-              (props) => <WelcomePage user={ this.state.user } />
-            }
+            component={ Welcome }
           />
           {
             this.state.user ?
