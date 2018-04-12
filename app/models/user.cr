@@ -1,14 +1,22 @@
 require "crypto/bcrypt/password"
-# require "secure_random"
-
 require "./base_model"
 require "../mailers/user_mailer"
+
+# id SERIAL PRIMARY KEY,
+# email VARCHAR(150) NOT NULL UNIQUE,
+# encrypted_password VARCHAR(500) NOT NULL,
+# reset_password_token VARCHAR(100) UNIQUE,
+# name VARCHAR(100),
+# log_requests BOOLEAN DEFAULT FALSE,
+# last_login_at TIMESTAMP,
+# created_at TIMESTAMP,
+# updated_at TIMESTAMP
 
 class User < Granite::ORM::Base
   include BaseModel
   adapter pg
   table_name users
-  primary id : Int32
+  primary id : Int64
   field name : String
   field email : String
   field encrypted_password : String

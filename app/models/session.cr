@@ -1,15 +1,24 @@
 require "./base_model"
-# require "secure_random"
+
+# id SERIAL PRIMARY KEY,
+# user_id SERIAL,
+# token VARCHAR(256) NOT NULL,
+# remote_ip INET,
+# expired_at TIMESTAMP,
+# created_at TIMESTAMP,
+# updated_at TIMESTAMP
 
 class Session < Granite::ORM::Base
   include BaseModel
-  EXPIRE_TIMEOUT = 1.day
+
+  EXPIRE_TIMEOUT = 7.days
+  SOON_EXPIRE_IN = 1.day
 
   adapter pg
   table_name sessions
 
-  primary id : Int32
-  field user_id : Int32 | Nil
+  primary id : Int64
+  field user_id : Int64 | Nil
   field token : String
   field expired_at : Time
   timestamps
@@ -34,12 +43,20 @@ class Session < Granite::ORM::Base
     save
   end
 
+  def expires_soon?
+    if expired = @expired_at
+      puts "EXPIRE TIME: #{expired}"
+      expired < SOON_EXPIRE_IN.from_now
+    end
+  end
+
   def update_expiration_time!
     @expired_at = EXPIRE_TIMEOUT.from_now
     save
   end
 
   protected def generate_token
+    @user_id ||= -1.to_i64
     @token ||= Random::Secure.hex(128)
   end
 end

@@ -25,7 +25,6 @@ module Middleware
       if cookies && (cookie = cookies[@session_key]?)
         session_token = cookie.value
       end
-
       if session_token.nil?
         write_session_cookies(env)
       else
@@ -33,7 +32,7 @@ module Middleware
         if session.nil?
           write_session_cookies(env)
         else
-          session.update_expiration_time!
+          session.update_expiration_time! if session.expires_soon?
           env.request.session = session
         end
       end

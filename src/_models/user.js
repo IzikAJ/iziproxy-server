@@ -48,6 +48,12 @@ export class User {
     }).catch(err => {
       console.log('SERVERS FAILED');
     });
+
+    Api.profile.tokens.list().then(data => {
+      console.log('TOKENS', data);
+    }).catch(err => {
+      console.log('TOKENS FAILED');
+    });
   }
 
   static hook(context, callback) {

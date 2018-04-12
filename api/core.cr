@@ -15,7 +15,9 @@ module Api
       get "profile", "profile#show"
       post "profile", "profile#update"
 
+      get "accounts/tokens", "accounts/tokens#index"
       post "accounts/token", "accounts/tokens#create"
+      delete "accounts/token/:token_id", "accounts/tokens#destroy"
     end
   end
 end

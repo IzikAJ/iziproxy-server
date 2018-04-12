@@ -26,10 +26,6 @@ class HttpServer
     get "/", "welcome#show"
 
     # new session
-    puts "????????"
-    # puts Auth::SessionsController
-    puts "????????"
-    # puts Auth::SessionsController
     get "/auth/session/new", "auth/sessions#new"
     post "/auth/session", "auth/sessions#create"
     # restore password

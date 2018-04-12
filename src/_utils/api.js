@@ -26,6 +26,17 @@ class BaseApi {
       update: (params) => {
         return axios.post('/api/profile.json', params);
       },
+      tokens: {
+        list: (params) => {
+          return axios.get('/api/accounts/tokens.json', params);
+        },
+        create: () => {
+          return axios.post('/api/accounts/tokens.json', {});
+        },
+        destroy: (token_id) => {
+          return axios.delete(`/api/accounts/tokens/${token_id}.json`);
+        },
+      },
     };
 
     this.servers = {
