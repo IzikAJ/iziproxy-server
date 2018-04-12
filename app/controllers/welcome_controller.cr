@@ -1,4 +1,3 @@
-require "../*"
 require "./application_controller"
 
 class WelcomeController < ApplicationController

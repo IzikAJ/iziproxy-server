@@ -5,13 +5,13 @@ module Auth
   class SessionsController < ApplicationController
     property form : LoginForm = LoginForm.new
 
-    def new
+    def action_new
       redirect_if_authorized!
       redirect_to "/stats" if user_signed_in?
       render "app/views/auth/sessions/new.slim"
     end
 
-    def create
+    def action_create
       redirect_if_authorized!
       form = LoginForm.from_params(context.params)
       if form && form.valid? &&

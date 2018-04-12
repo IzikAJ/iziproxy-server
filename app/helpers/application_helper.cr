@@ -24,7 +24,7 @@ module ApplicationHelper
     end
 
     def input(name : AnyKey, **params)
-      input name, normalizeHash(params)
+      input name, normalize_hash(params)
     end
 
     def submit(params : NormalizedHash)
@@ -32,11 +32,11 @@ module ApplicationHelper
     end
 
     def submit(**params)
-      submit_tag normalizeHash(params)
+      submit_tag normalize_hash(params)
     end
   end
 
-  def normalizeHash(inital : AnyHash | NamedTuple)
+  def normalize_hash(inital : AnyHash | NamedTuple)
     ans = NormalizedHash.new
     inital.to_a.each do |pair|
       ans[pair[0].to_s] = pair[1].to_s
@@ -50,7 +50,7 @@ module ApplicationHelper
   end
 
   def tag(name : AnyKey, **params)
-    tag name, normalizeHash(params)
+    tag name, normalize_hash(params)
   end
 
   def content_tag(name : AnyKey, content : String, params : NormalizedHash)
@@ -58,11 +58,11 @@ module ApplicationHelper
   end
 
   def content_tag(name : AnyKey, content : String, **params)
-    content_tag name, content, normalizeHash(params)
+    content_tag name, content, normalize_hash(params)
   end
 
   def content_tag(name : AnyKey, **params)
-    content_tag name, "#{yield}", normalizeHash(params)
+    content_tag name, "#{yield}", normalize_hash(params)
   end
 
   def link_to(title : String, path : String, params : NormalizedHash)
@@ -71,11 +71,11 @@ module ApplicationHelper
   end
 
   def link_to(title : String, path : String, **params)
-    link_to title, path, normalizeHash(params)
+    link_to title, path, normalize_hash(params)
   end
 
   def link_to(path : String, **params)
-    link_to "#{yield}", path, normalizeHash(params)
+    link_to "#{yield}", path, normalize_hash(params)
   end
 
   def form_for(form : ApplicationForm, params : NormalizedHash)
@@ -86,7 +86,7 @@ module ApplicationHelper
   end
 
   def form_for(form : ApplicationForm, **params)
-    form_for form, normalizeHash(params) do |form|
+    form_for form, normalize_hash(params) do |form|
       yield form
     end
   end
@@ -101,7 +101,7 @@ module ApplicationHelper
   end
 
   def input_tag(form : ApplicationForm, name : AnyKey, **params)
-    input_tag form, name, normalizeHash(params)
+    input_tag form, name, normalize_hash(params)
   end
 
   def submit_tag(params : NormalizedHash)
@@ -111,6 +111,6 @@ module ApplicationHelper
   end
 
   def submit_tag(**params)
-    submit_tag normalizeHash(params)
+    submit_tag normalize_hash(params)
   end
 end

@@ -14,6 +14,8 @@ module Api
 
       get "profile", "profile#show"
       post "profile", "profile#update"
+
+      post "accounts/token", "accounts/tokens#create"
     end
   end
 end

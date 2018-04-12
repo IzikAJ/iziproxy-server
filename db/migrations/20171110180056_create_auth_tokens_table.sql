@@ -1,7 +1,7 @@
 -- +micrate Up
 -- SQL in section 'Up' is executed when this migration is applied
 CREATE TABLE auth_tokens (
-  id BIGSERIAL PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   user_id BIGSERIAL NOT NULL,
   token VARCHAR(100) NOT NULL,
   remote_ip INET,

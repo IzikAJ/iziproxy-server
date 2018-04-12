@@ -1,9 +1,10 @@
 require "kemal"
 require "./proxy_server"
-require "./controllers/*"
-require "./controllers/auth/*"
 require "./lib/utils/pretty_routes"
 require "../api/core"
+
+require "./controllers/*"
+require "./controllers/auth/*"
 
 class HttpServer
   include PrettyRoutes
@@ -21,12 +22,14 @@ class HttpServer
   end
 
   def draw_routes!
-    # Kemal::RouteHandler.INSTANCE
-
     # root page
     get "/", "welcome#show"
 
     # new session
+    puts "????????"
+    # puts Auth::SessionsController
+    puts "????????"
+    # puts Auth::SessionsController
     get "/auth/session/new", "auth/sessions#new"
     post "/auth/session", "auth/sessions#create"
     # restore password

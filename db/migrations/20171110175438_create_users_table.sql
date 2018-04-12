@@ -1,7 +1,7 @@
 -- +micrate Up
 -- SQL in section 'Up' is executed when this migration is applied
 CREATE TABLE users (
-  id BIGSERIAL PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   email VARCHAR(150) NOT NULL UNIQUE,
   encrypted_password VARCHAR(500) NOT NULL,
   reset_password_token VARCHAR(100) UNIQUE,

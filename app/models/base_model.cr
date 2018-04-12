@@ -1,6 +1,6 @@
-require "../../config/db"
 require "json"
 require "db"
+require "../../config/db"
 # require "granite_orm"
 require "granite_orm/adapter/pg"
 

@@ -11,7 +11,7 @@ User.clear
   user.log_requests = true
   if user.save
     puts "USER: #{mail}, #{pass}"
-    auth = AuthToken.new(user_id: user.id)
+    auth = AuthToken.new(user_id: user.id.not_nil!.to_i64)
     if auth.save
       puts "TOKEN: #{auth.token}"
     else

@@ -12,7 +12,7 @@ process = Sentry.config(
     "config/**/*.cr", "config/**/*.ecr",
   ],
   build_args: ["build", "app.cr", "-o", ".bin/app"],
-  run_args: ["-p", "9000"])
+  run_args: ["-p", "9111"])
 
 Sentry.run(process) do
 end

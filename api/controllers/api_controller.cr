@@ -11,3 +11,4 @@ end
 require "./session_controller"
 require "./profile_controller"
 require "./servers_controller"
+require "./accounts/*"

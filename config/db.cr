@@ -26,5 +26,5 @@ module Repo
 end
 
 # shortcut variables, optional
-Query = Crecto::Repo::Query
-Multi = Crecto::Multi
+Crecto::Repo::Query
+Crecto::Multi

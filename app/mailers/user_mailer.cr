@@ -12,7 +12,7 @@ class UserMailer < ApplicationMailer
     self.mail_subject = "Restore password"
     self.mail_text = "
       Hello, your reset password link is:
-      http://localhost:9000/auth/password/edit?token=#{user.reset_password_token}
+      http://localhost:9111/auth/password/edit?token=#{user.reset_password_token}
     "
     deliver!
   end
