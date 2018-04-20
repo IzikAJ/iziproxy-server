@@ -5,7 +5,7 @@ CREATE TABLE auth_tokens (
   id BIGINT PRIMARY KEY NOT NULL DEFAULT nextval('auth_tokens_id_seq'),
   user_id BIGINT NOT NULL,
   token VARCHAR(100) NOT NULL,
-  remote_ip INET,
+  remote_ip VARCHAR(200),
   expired_at TIMESTAMP,
   created_at TIMESTAMP,
   updated_at TIMESTAMP

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ServerLog } from './stats/server-log';
+import { RequestTokens } from './stats/request-tokens';
 import { User } from '../_models/user';
 
 export class Show extends Component {
@@ -17,13 +18,10 @@ export class Show extends Component {
   render() {
     return (
       <div>
-        TODO
-        {JSON.stringify(this.props)}
-        <hr />
-        {JSON.stringify(this.state)}
-        profile/show
+        TODO profile/show
 
         <ServerLog />
+        <RequestTokens />
       </div>
     );
   }

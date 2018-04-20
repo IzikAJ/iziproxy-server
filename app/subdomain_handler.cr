@@ -7,6 +7,7 @@ require "uuid"
 require "./lib/engine"
 require "./models/request_item"
 require "./app_logger"
+require "./commands/redis_log/client"
 
 class SubdomainHandler
   include HTTP::Handler
@@ -33,11 +34,12 @@ class SubdomainHandler
 
     id = UUID.random.to_s
 
+    fullpath = [env.request.path, env.request.query].reject(&.nil?).join("?")
     req = JSON.build do |json|
       json.object do
         json.field :id, id
         json.field :method, env.request.method
-        json.field :path, [env.request.path, env.request.query].reject(&.nil?).join("?")
+        json.field :path, fullpath
         json.field :headers do
           App::Utils::Headers.build_json(json, env.request.headers)
         end
@@ -47,27 +49,47 @@ class SubdomainHandler
       end
     end
 
-    if (user = app.clients[client_id].user) && !user.id.nil? && user.log_requests
+    if (client = app.clients[client_id]) &&
+       (user = client.user) &&
+       user.log_requests &&
+       (conn = client.connection)
       req_item = RequestItem.new(
         uuid: id,
-        client_uuid: client_id,
+        connection_id: conn.id,
         request: req.to_s,
-        user_id: user.id.not_nil!.to_i64
+        remote_ip: env.remote_ip
       )
       req_item.save
+
+      RedisLog::ClientCommand.new(client).blob({
+        at:            "sent",
+        uuid:          id,
+        connection_id: conn.id,
+        method:        env.request.method,
+        path:          env.request.path,
+        query:         env.request.query,
+        remote_ip:     env.remote_ip,
+        stored_id:     req_item.id,
+      })
     end
 
     app.clients[client_id].socket.puts req
 
-    timeout = 60.seconds.from_now
+    timeout = 2.minutes.from_now
     if (hdr = env.request.headers["Content-Type"]?) &&
        (hdr =~ /^multipart\/form-data/)
-      timeout = 10.minutes.from_now
+      timeout = 20.minutes.from_now
     end
 
     while !app.responses.has_key?(id)
-      sleep 0.05
-      if Time.now > timeout
+      begin
+        sleep 0.05
+        if Time.now > timeout
+          env.response.status_code = 408
+          env.response.print "Timeout"
+        end
+      rescue
+        puts "ERROR: raised error on responce wait"
         env.response.status_code = 408
         env.response.print "Timeout"
       end

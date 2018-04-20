@@ -10,14 +10,14 @@ module Api
       post "session", "session#create"
       delete "session", "session#destroy"
 
-      get "servers", "servers#index"
-
       get "profile", "profile#show"
       post "profile", "profile#update"
 
       get "accounts/tokens", "accounts/tokens#index"
-      post "accounts/token", "accounts/tokens#create"
-      delete "accounts/token/:token_id", "accounts/tokens#destroy"
+      post "accounts/tokens", "accounts/tokens#create"
+      delete "accounts/tokens/:token_id/x", "accounts/tokens#destroy"
+
+      get "accounts/connections", "accounts/connections#index"
     end
   end
 end

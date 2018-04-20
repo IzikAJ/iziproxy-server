@@ -1,13 +1,5 @@
 require "./base_model"
 
-# id SERIAL PRIMARY KEY,
-# user_id SERIAL NOT NULL,
-# token VARCHAR(100) NOT NULL,
-# remote_ip INET,
-# expired_at TIMESTAMP,
-# created_at TIMESTAMP,
-# updated_at TIMESTAMP
-
 class AuthToken < Granite::ORM::Base
   include BaseModel
   adapter pg

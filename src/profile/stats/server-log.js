@@ -18,5 +18,3 @@ export class ServerLog extends Component {
     );
   }
 }
-
-export default ServerLog;

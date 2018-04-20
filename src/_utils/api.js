@@ -34,14 +34,13 @@ class BaseApi {
           return axios.post('/api/accounts/tokens.json', {});
         },
         destroy: (token_id) => {
-          return axios.delete(`/api/accounts/tokens/${token_id}.json`);
+          return axios.delete(`/api/accounts/tokens/${token_id}/x.json`);
         },
       },
-    };
-
-    this.servers = {
-      list: () => {
-        return axios.get('/api/servers.json');
+      connections: {
+        list: (params) => {
+          return axios.get('/api/accounts/connections.json', params);
+        },
       },
     };
   }

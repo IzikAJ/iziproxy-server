@@ -5,7 +5,7 @@ CREATE TABLE sessions (
   id BIGINT PRIMARY KEY NOT NULL DEFAULT nextval('sessions_id_seq'),
   user_id BIGINT,
   token VARCHAR(256) NOT NULL,
-  remote_ip INET,
+  remote_ip VARCHAR(200),
   expired_at TIMESTAMP,
   created_at TIMESTAMP,
   updated_at TIMESTAMP

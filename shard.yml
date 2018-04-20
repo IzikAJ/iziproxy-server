@@ -13,6 +13,13 @@ dependencies:
   dotenv:
     github: gdotdesign/cr-dotenv
 
+  redis:
+    github: stefanwille/crystal-redis
+
+  sidekiq:
+    github: mperham/sidekiq.cr
+    branch: master
+
   kemal:
     github: kemalcr/kemal
   kilt:
@@ -29,6 +36,10 @@ dependencies:
 development_dependencies:
   sentry-run:
     github: faustinoaq/sentry-run
+
+  sentry:
+    github: samueleaton/sentry
+    branch: master
 
   ameba:
     github: veelenga/ameba

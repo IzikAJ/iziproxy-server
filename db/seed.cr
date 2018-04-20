@@ -5,6 +5,10 @@ AuthToken.clear
 User.clear
 [
   "izikaj@gmail.com",
+  "i@i.ua",
+  "123@mailinator.com",
+  "izik@mailinator.com",
+  "kenny@mailinator.com",
 ].each do |mail|
   pass = ENV["ENV"] == "development" ? "1" * 8 : Random::Secure.hex(16)
   user = User.build(email: mail, password: pass)

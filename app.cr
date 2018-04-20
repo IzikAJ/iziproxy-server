@@ -1,11 +1,13 @@
-require "kemal"
+require "http/server"
 require "dotenv"
+require "sidekiq"
 require "./app/lib/engine"
 require "./app/middleware/*"
 require "./app/queries/*"
 require "./app/*"
 
 Dotenv.load
+Sidekiq::Client.default_context = Sidekiq::Client::Context.new
 
 AppLogger.configure do |conf|
   conf.logger = Logger.new(STDOUT)
@@ -19,12 +21,16 @@ ProxyServer.configure do |conf|
 end
 
 # filters must be inserted from most common to specific one
-Kemal.config.add_filter_handler Middleware::SessionHandler.new(ENV["SESSION_KEY"])
-Kemal.config.add_filter_handler Middleware::SubdomainMatcher.new(
-  ENV["HOST"], "*.@", SubdomainHandler.new
+server = HTTP::Server.new(
+  "0.0.0.0",
+  9111,
+  [
+    # HTTP::LogHandler.new,
+    Middleware::SessionHandler.new(ENV["SESSION_KEY"]),
+    Middleware::SubdomainMatcher.new(
+      ENV["HOST"], "*.@", SubdomainHandler.new
+    ),
+  ]
 )
-
-HttpServer.run
-SocketServer.run
 TcpServer.run
-Kemal.run
+server.listen

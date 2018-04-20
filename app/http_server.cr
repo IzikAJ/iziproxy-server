@@ -1,6 +1,8 @@
 require "kemal"
+
 require "./proxy_server"
 require "./lib/utils/pretty_routes"
+require "./serializers/*"
 require "../api/core"
 
 require "./controllers/*"

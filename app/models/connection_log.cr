@@ -1,11 +1,5 @@
 require "./base_model"
 
-# id SERIAL PRIMARY KEY,
-# connection_id SERIAL NOT NULL,
-# message VARCHAR(250),
-# level INTEGER,
-# created_at TIMESTAMP
-
 class ConnectionLog < Granite::ORM::Base
   include BaseModel
   adapter pg

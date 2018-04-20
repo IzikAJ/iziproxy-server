@@ -2,16 +2,6 @@ require "crypto/bcrypt/password"
 require "./base_model"
 require "../mailers/user_mailer"
 
-# id SERIAL PRIMARY KEY,
-# email VARCHAR(150) NOT NULL UNIQUE,
-# encrypted_password VARCHAR(500) NOT NULL,
-# reset_password_token VARCHAR(100) UNIQUE,
-# name VARCHAR(100),
-# log_requests BOOLEAN DEFAULT FALSE,
-# last_login_at TIMESTAMP,
-# created_at TIMESTAMP,
-# updated_at TIMESTAMP
-
 class User < Granite::ORM::Base
   include BaseModel
   adapter pg
@@ -30,6 +20,7 @@ class User < Granite::ORM::Base
   has_many :auth_tokens
   has_many :sessions
   has_many :request_items
+  has_many :connections
 
   @password : String | Nil
 

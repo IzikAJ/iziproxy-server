@@ -1,14 +1,5 @@
 require "./base_model"
 
-# id SERIAL PRIMARY KEY,
-# connection_id SERIAL NOT NULL,
-# remote_ip INET,
-# request TEXT,
-# status_code INTEGER,
-# response TEXT,
-# created_at TIMESTAMP,
-# updated_at TIMESTAMP
-
 class RequestItem < Granite::ORM::Base
   include BaseModel
   adapter pg
@@ -16,6 +7,7 @@ class RequestItem < Granite::ORM::Base
   primary id : Int64
   #
   field connection_id : Int64
+  field uuid : String
   field request : String
   field response : String
   field status_code : Int32

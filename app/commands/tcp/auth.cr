@@ -22,7 +22,12 @@ class AuthCommand < TcpCommand
     if user = client.user
       user.clients << client
 
-      puts "REGISTER CLIENT #{client.inspect} to USER #{user.inspect}"
+      if conn = client.connection
+        conn.user_id = user.id
+        conn.save
+      end
+
+      RedisLog::ClientCommand.new(client).authorized
     end
 
     respond!

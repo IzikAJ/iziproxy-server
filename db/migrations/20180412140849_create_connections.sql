@@ -4,8 +4,9 @@ CREATE SEQUENCE connections_id_seq;
 CREATE TABLE connections (
   id BIGINT PRIMARY KEY NOT NULL DEFAULT nextval('connections_id_seq'),
   client_uuid UUID NOT NULL,
-  user_id BIGINT NOT NULL,
-  remote_ip INET,
+  user_id BIGINT,
+  remote_ip VARCHAR(200),
+  subdomain VARCHAR(200),
   packets_count INTEGER DEFAULT 0,
   errors_count INTEGER DEFAULT 0,
   created_at TIMESTAMP,

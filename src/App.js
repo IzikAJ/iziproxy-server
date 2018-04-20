@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import './App.css';
 import { Root as Welcome } from './welcome/root';
 import { Form as LoginForm } from './login/Form.js';
+import { Root as Connections } from './connections/root';
 import { Root as Profile } from './profile/root';
 import { PageNotFound } from './shared/page-not-found';
 import { Api } from './_utils/api';
@@ -90,6 +91,10 @@ export class App extends Component {
             (props) => this.renderGreeting(this.state.user)
           }
         />
+        <Route
+          path="/connection(s|)"
+          component={ Connections }
+        />
         <Redirect from="/login" to="/profile"/>
       </Switch>
     );
@@ -98,8 +103,18 @@ export class App extends Component {
   renderUnauthorizedRoutes() {
     return (
       <Switch>
-        <Redirect from="/profile" to="/login"/>
-        <Route path="/login" render={(props) => this.renderLoginForm(props) }/>
+        <Redirect
+          from="/profile"
+          to="/login"
+        />
+        <Redirect
+          from="/connection(s|)"
+          to="/login"
+        />
+        <Route
+          path="/login"
+          render={ (props) => this.renderLoginForm(props) }
+        />
       </Switch>
     );
   }

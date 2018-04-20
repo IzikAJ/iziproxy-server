@@ -1,5 +1,5 @@
 require "../api_controller"
-require "../../forms/profile_form"
+require "../../../app/queries/request_tokens_query"
 
 module Api
   module Accounts
@@ -7,37 +7,28 @@ module Api
       def index
         if (session = context.request.session) &&
            (user = session.user)
-          profile_json user
-          # puts AuthToken.all
-          tokens = AuthToken.all(
-            "WHERE user_id = ?",
-            [user.id]
-          )
-          tokens.map { |t| serialize_token(t) }.to_json
+          RequestTokensQuery.new(user).list.map do |token|
+            TokenSerializer.new(token).as_json
+          end.to_json
         else
-          status_code! 422
-          "sorry"
+          fail!
         end
       end
 
       def destroy
         if (session = context.request.session) &&
            (user = session.user) &&
-           (token_id = @context.params.url["token_id"])
-          token = AuthToken.first(
-            "WHERE user_id = ? AND id = ?",
-            [user.id, token_id]
-          )
+           (token_id = @context.params.url["token_id"]?)
+          token = RequestTokensQuery.new(user).find(token_id.to_i64)
           if token
             token.destroy
-            serialize_token(token).to_json
+            # serialize_token(token).to_json
+            TokenSerializer.new(token).to_json
           else
-            status_code! 404
-            "token not found"
+            fail! 404, "token not found"
           end
         else
-          status_code! 422
-          "sorry"
+          fail! 422, "some error occured"
         end
       end
 
@@ -47,7 +38,8 @@ module Api
            (user = session.user) &&
            (token.user_id = user.id.not_nil!.to_i64) &&
            token.save
-          serialize_token(token).to_json
+          # serialize_token(token).to_json
+          TokenSerializer.new(token).to_json
         else
           status_code! 422
           {
@@ -62,18 +54,6 @@ module Api
           token:      token.token,
           expired_at: token.expired_at,
         }
-      end
-
-      private def profile_json(user : User)
-        puts "~~~ #{user.inspect}"
-        {
-          id:           user.id,
-          name:         user.name,
-          email:        user.email,
-          log_requests: user.log_requests,
-          created_at:   user.created_at,
-          tokens:       user.auth_tokens.to_s,
-        }.to_json
       end
     end
   end

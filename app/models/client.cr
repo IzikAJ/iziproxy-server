@@ -1,6 +1,8 @@
 require "./base_model"
 require "./subdomain"
+require "./connection"
 require "../proxy_server"
+require "../workers/check_connection_worker"
 require "uuid"
 
 class Client
@@ -10,6 +12,7 @@ class Client
   getter server : ProxyServer = ProxyServer.instance
   getter uuid : String
   getter socket
+  getter connection
   getter subdomain : Subdomain
   property user : User?
   property created_at : Time
@@ -32,6 +35,16 @@ class Client
     @socket = socket
     @created_at = Time.now
 
+    @connection = Connection.new(
+      client_uuid: @uuid,
+      remote_ip: socket.remote_address.to_s,
+    )
+    # user_id: -1_i64
+    if @connection.save && (conn_id = @connection.id)
+      puts "ACTION SENT", Time.now
+      CheckConnectionWorker.async.perform_in(20.seconds, conn_id)
+    end
+
     register_subdomain(@subdomain)
   end
 
@@ -45,6 +58,9 @@ class Client
         free_subdomain! curr_subdomain
       end
       server.subdomains[subdomain.namespace] = subdomain
+      if conn = @connection
+        conn.subdomain = subdomain.namespace
+      end
       @subdomain = subdomain
     end
   end

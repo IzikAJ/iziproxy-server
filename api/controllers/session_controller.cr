@@ -5,26 +5,9 @@ module Api
   class SessionController < ApiController
     def show
       if session = context.request.session
-        user_params = nil
-        if user = session.user
-          user_params = {
-            id:            user.id,
-            name:          user.name,
-            email:         user.email,
-            log_requests:  user.log_requests,
-            last_login_at: user.last_login_at,
-            created_at:    user.created_at,
-          }
-        end
-        {
-          token:      session.token,
-          user:       user_params,
-          expired_at: session.expired_at,
-        }.to_json
+        SessionSerializer.new(session).to_json
       else
-        {
-          session: "",
-        }.to_json
+        SessionSerializer.blank.to_json
       end
     end
 
@@ -34,16 +17,10 @@ module Api
          (session = context.request.session) &&
          (user = form.user)
         session.sign_in(user)
-
-        return {
-          token: session.token,
-        }.to_json
+        SessionSerializer.new(session).to_json
       end
 
-      status_code! 422
-      {
-        errors: form.try(&.errors),
-      }.to_json
+      form_error! form
     end
 
     def destroy

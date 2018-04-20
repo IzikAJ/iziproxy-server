@@ -6,10 +6,9 @@ module Api
     def show
       if (session = context.request.session) &&
          (user = session.user)
-        profile_json user
+        UserSerializer.new(user).to_json
       else
-        status_code! 422
-        "sorry"
+        fail!
       end
     end
 
@@ -19,25 +18,10 @@ module Api
          (session = context.request.session) &&
          (user = form.user)
         form.save!
-        profile_json user
+        UserSerializer.new(user).to_json
       else
-        status_code! 422
-        {
-          errors: form.try(&.errors),
-        }.to_json
+        form_error! form
       end
-    end
-
-    private def profile_json(user : User)
-      puts "~~~ #{user.inspect}"
-      {
-        id:           user.id,
-        name:         user.name,
-        email:        user.email,
-        log_requests: user.log_requests,
-        created_at:   user.created_at,
-        tokens:       user.auth_tokens.to_s,
-      }.to_json
     end
   end
 end

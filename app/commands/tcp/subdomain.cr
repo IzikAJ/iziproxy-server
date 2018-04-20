@@ -1,4 +1,5 @@
 require "json"
+require "../../queries/session_query"
 
 class SubdomainCommand < TcpCommand
   def call
@@ -17,11 +18,17 @@ class SubdomainCommand < TcpCommand
       client.register_subdomain Subdomain.new(client.uuid, new_subdomain)
     end
 
+    if (conn = client.connection) &&
+       (namespace = client.subdomain.try(&.namespace))
+      conn.subdomain = namespace
+      conn.save
+    end
+
+    RedisLog::ClientCommand.new(client).updated
     respond!
   end
 
   def result?
-    info "SUBDOMAIN !!!\"#{client.subdomain.try(&.namespace)}\"!!!"
     JSON.build do |json|
       json.object do
         json.field :command do
