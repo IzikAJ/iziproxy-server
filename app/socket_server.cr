@@ -3,6 +3,7 @@ require "kemal"
 require "json"
 require "./queries/*"
 require "./commands/redis_log/*"
+require "./commands/ws_hub"
 
 module Sockets
   # commands
@@ -10,6 +11,7 @@ module Sockets
   LEAVE_COMMAND = "leave"
 
   WELCOME_TYPE = "welcome"
+  ARRAY_TYPE   = "array"
 
   KIND_FIELD = "kind"
   TYPE_FIELD = "type"
@@ -112,7 +114,7 @@ module Sockets
       end
     end
 
-    private def join!(socket : String, message : JSON::Any, session : Session, user : User, redis : Redis)
+    private def join!(token : String, message : JSON::Any, session : Session, user : User, redis : Redis)
       name : String?
       case message[KIND_FIELD]?
       when RedisLogService::GLOBAL
@@ -130,9 +132,40 @@ module Sockets
           name = RedisLogService.name(RedisLogService::CLIENT, uuid)
         end
       end
+
       if namespace = name
-        # puts "LISTEN: #{name}"
-        redis.subscribe name
+        redis.subscribe namespace
+
+        if socket = @sockets[token]
+          case message[KIND_FIELD]?
+          when RedisLogService::GLOBAL
+          when RedisLogService::USER
+            if user_id = user.id
+            end
+          when RedisLogService::SESSION
+            if session_id = session.id
+            end
+          when RedisLogService::CLIENT
+            if uuid = message["uuid"]?.try(&.as_s)
+              query = RequestsQuery.new(uuid)
+              items_count = query.total_count
+              if items_count > 0
+                log_items = query.list.map do |item|
+                  RequestItemSerializer.new(item).as_json
+                end
+                if log_items.size > 0
+                  socket.send({
+                    type:   ARRAY_TYPE,
+                    kind:   "client",
+                    target: uuid,
+                    count:  items_count,
+                    items:  log_items,
+                  }.to_json)
+                end
+              end
+            end
+          end
+        end
       else
         # puts "LISTEN FAILED: unknown kind"
       end
@@ -160,6 +193,7 @@ module Sockets
                 if (token = env.params.url["token"])
                   redis.punsubscribe("*")
                   @sockets.delete(token)
+                  redis.close rescue nil
                   puts "Closing Socket???: #{socket}"
                 end
               end
@@ -178,13 +212,19 @@ module Sockets
           if (token = env.params.url["token"]) &&
              (sess = SessionQuery.new.find(token)) &&
              (user = sess.user)
-            if msg = JSON.parse(message)
-              case msg[TYPE_FIELD]?
-              when JOIN_COMMAND
-                join! token, msg, sess, user, redis
-              when LEAVE_COMMAND
-                leave! token, msg, sess, user, redis
-              end
+            if (msg = JSON.parse(message)) &&
+               (sock = @sockets[token])
+              puts "+++++++++++++++++++++++++"
+              puts ">>> #{message}"
+
+              WS::Hub.call(msg, sock, sess, user, redis)
+              puts "+++++++++++++++++++++++++"
+              # case msg[TYPE_FIELD]?
+              # when JOIN_COMMAND
+              #   join! token, msg, sess, user, redis
+              # when LEAVE_COMMAND
+              #   leave! token, msg, sess, user, redis
+              # end
             end
           end
         end
@@ -194,6 +234,7 @@ module Sockets
           if token = env.params.url["token"]
             @sockets.delete(token)
           end
+          redis.close rescue nil
           puts "Closing Socket: #{socket}"
         end
       end

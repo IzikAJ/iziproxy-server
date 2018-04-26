@@ -64,8 +64,9 @@ export class User {
       if (message && message.type === 'welcome') {
         // reconnect to all channels on reset connection
         // _sock_reconnect()
+        console.log('!!!', 'welcome')
       } else {
-        console.log('received message:', message)
+        console.log('<<<', message)
       }
     }).share();
   }
@@ -84,7 +85,7 @@ export class User {
   }
 
   subscribeClientLog(uuid) {
-    console.log('subscribeClientLog')
+    console.log('subscribeClientLog', uuid)
     this.sock_input.next(JSON.stringify({
       type: 'join',
       uuid: uuid,
@@ -93,6 +94,7 @@ export class User {
   }
 
   unsubscribeClientLog(uuid) {
+    console.log('unsubscribeClientLog', uuid)
     this.sock_input.next(JSON.stringify({
       type: 'leave',
       uuid: uuid,

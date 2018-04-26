@@ -17,6 +17,5 @@ class Connection < Granite::ORM::Base
   timestamps
 
   belongs_to :user
-  has_many :connection_logs
   has_many :request_items
 end

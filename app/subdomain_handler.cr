@@ -56,21 +56,18 @@ class SubdomainHandler
       req_item = RequestItem.new(
         uuid: id,
         connection_id: conn.id,
-        request: req.to_s,
-        remote_ip: env.remote_ip
+        client_uuid: client.uuid,
+        remote_ip: env.remote_ip,
+        method: env.request.method,
+
+        path: env.request.path,
+        query: env.request.query,
       )
       req_item.save
 
       RedisLog::ClientCommand.new(client).blob({
-        at:            "sent",
-        uuid:          id,
-        connection_id: conn.id,
-        method:        env.request.method,
-        path:          env.request.path,
-        query:         env.request.query,
-        remote_ip:     env.remote_ip,
-        stored_id:     req_item.id,
-      })
+        at: "sent",
+      }.merge(RequestItemSerializer.new(req_item).as_json))
     end
 
     app.clients[client_id].socket.puts req

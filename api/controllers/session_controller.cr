@@ -18,9 +18,9 @@ module Api
          (user = form.user)
         session.sign_in(user)
         SessionSerializer.new(session).to_json
+      else
+        form_error! form
       end
-
-      form_error! form
     end
 
     def destroy

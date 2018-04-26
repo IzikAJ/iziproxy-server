@@ -47,7 +47,6 @@ class TcpServer
        (status = data["status"]?.try(&.as_i)) &&
        (headers = data["headers"]?)
       item.status_code = status
-      item.response = headers.to_json
       item.save
       if conn = client.connection
         if (status >= 200 && status < 400)
@@ -59,12 +58,8 @@ class TcpServer
       end
 
       RedisLog::ClientCommand.new(client).blob({
-        at:            "recived",
-        uuid:          item.uuid,
-        connection_id: item.connection_id,
-        status:        status,
-        stored_id:     item.id,
-      })
+        at: "recived",
+      }.merge(RequestItemSerializer.new(item).as_json))
     end
   end
 

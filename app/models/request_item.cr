@@ -6,12 +6,15 @@ class RequestItem < Granite::ORM::Base
   table_name request_items
   primary id : Int64
   #
-  field connection_id : Int64
   field uuid : String
-  field request : String
-  field response : String
-  field status_code : Int32
+  field connection_id : Int64
+  field client_uuid : String
   field remote_ip : String
+
+  field method : String
+  field path : String
+  field query : String
+  field status_code : Int32
   #
   timestamps
 

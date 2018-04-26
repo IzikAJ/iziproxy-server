@@ -14,6 +14,10 @@ class RedisLogService
     name = channel_name(kind, target)
     # publish message
     @redis.publish(name, message)
+    # store it in cache for some time
+    # in list
+    # @redis.rpush name, message
+    # @redis.ltrim name, -100, -1
     # # store it in cache for some time
     # ext_name = "#{name}@#{Random.rand}"
     # @redis.set(ext_name, message)

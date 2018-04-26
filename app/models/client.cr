@@ -2,7 +2,7 @@ require "./base_model"
 require "./subdomain"
 require "./connection"
 require "../proxy_server"
-require "../workers/check_connection_worker"
+require "../workers/check_connection"
 require "uuid"
 
 class Client
@@ -42,7 +42,7 @@ class Client
     # user_id: -1_i64
     if @connection.save && (conn_id = @connection.id)
       puts "ACTION SENT", Time.now
-      CheckConnectionWorker.async.perform_in(20.seconds, conn_id)
+      CheckConnectionWorker.async.perform_in(1.minute, conn_id)
     end
 
     register_subdomain(@subdomain)
