@@ -1,0 +1,18 @@
+# layout for itermocil
+# https://github.com/TomAnthony/itermocil
+# setup config:
+# cp ./terminal_layout.sample.yml ~/.teamocil/izi_proxy.yml
+# open layout:
+# itermocil izi_proxy
+#
+windows:
+  - name: izi_prxy
+    root: ~/www/sparse/iziproxy
+    layout: double-main-horizontal
+
+    panes:
+      - npm run dev
+      - redis-server
+      - crystal sidekiq.cr
+      - crystal dev.cr
+      - echo "ready"

@@ -64,16 +64,27 @@ db/seed.sh - fill DB by initial data
 db/reset.sh - reset database & fill it
 ```
 
+## DONE
+### server features
+ - authorization
+ - active connections list
+ - profile show/edit
+ - manage autorization tokens
+
+### client features
+ - connect to proxy-server
+ - authorize by token fron .env
+ - reconnect on fail
+
 ## TODO
 ### server improvements
- - log requests in db (for current session)
- - add 'replay request' function (available on log)
- - add detailed request preview (log)
  - add task to clear expired sessions
- - omniauth ?
  - add some css
 
 ### client improvements
+ - log requests in db (for current session)
+ - add 'replay request' function (available on log)
+ - add detailed request preview (log)
  - remove .env file requirement
  - add commands to configure auth key
  - add commands to configure server address
