@@ -5,6 +5,7 @@
 /.bin
 /.shards
 /lib
+/bin
 .icr_*
 .env
 node_modules
