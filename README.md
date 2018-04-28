@@ -27,7 +27,7 @@ run client (port 3001, requested subdomain - sample)
 ```
 ./client -p 3001 -s sample
 ```
-### or simple
+### or simple (```gem install foreman``` first)
 ```
 foreman start
 ```
