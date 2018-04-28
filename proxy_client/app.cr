@@ -4,11 +4,10 @@ require "socket"
 require "json"
 require "base64"
 require "logger"
-require "dotenv"
-
-Dotenv.load
 
 module ProxyClient
+  VERSION = "1.0.0"
+
   class App
     LIMIT_ATTEMPTS = 2
 
@@ -24,8 +23,9 @@ module ProxyClient
     property attempts = 0
 
     def initialize
+      @log.level = Logger::ERROR
       # @log.level = Logger::WARN
-      @log.level = Logger::INFO
+      # @log.level = Logger::INFO
 
       @reciver = Reciver.new @log
       @sender = Sender.new @log
@@ -37,7 +37,18 @@ module ProxyClient
 
       @host = ENV["PROXY_ENDPOINT"] if ENV["PROXY_ENDPOINT"]
 
+      unless (token = ENV["AUTH_TOKEN"]?) &&
+             !token.blank?
+        auth_token_error!
+      end
+
       connect!
+    end
+
+    def auth_token_error!
+      puts "!!! AUTH TOKEN NOT VALID !!!"
+      puts "Please visit your IziProxy account, and get new one"
+      exit
     end
 
     def authorize!(socket : TCPSocket)
@@ -48,7 +59,12 @@ module ProxyClient
         end
 
         reciver.recive socket, :auth do |resp, error|
-          @authorized = error.nil? && !resp.nil?
+          if !error.nil?
+            auth_token_error! if error["code"]? == "invalid"
+            puts "AUTH ERROR: #{error["message"]? || error}" unless error.nil?
+          elsif !resp.nil?
+            @authorized = true
+          end
         end
       rescue e
         log.error "AUTHORIZE ERROR #{e.message}"

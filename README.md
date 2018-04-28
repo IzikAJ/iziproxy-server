@@ -27,6 +27,10 @@ run client (port 3001, requested subdomain - sample)
 ```
 ./client -p 3001 -s sample
 ```
+### or simple
+```
+foreman start
+```
 
 ### dev nginx
 
@@ -79,12 +83,16 @@ db/reset.sh - reset database & fill it
 ## TODO
 ### server improvements
  - add task to clear expired sessions
+ -- crontab or redis?
  - add some css
+ -- login
+ -- profile
+ -- connections list
 
 ### client improvements
  - log requests in db (for current session)
- - add 'replay request' function (available on log)
- - add detailed request preview (log)
+ - add 'replay request' function (available on log?)
+ - add detailed request preview (log?)
  - remove .env file requirement
  - add commands to configure auth key
  - add commands to configure server address
