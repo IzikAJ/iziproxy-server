@@ -5,7 +5,7 @@ abstract class BaseSerializer
 
   alias AnyKey = String | Symbol
   alias AnyPrimitive = String | Symbol | Float32 | Float64 | Int32 | Int64 | Nil
-  alias AnyValue = Array(AnyPrimitive) | Hash(AnyKey, AnyPrimitive) | Enumerable(AnyPrimitive) | JSON::Type
+  alias AnyValue = Array(AnyPrimitive) | Hash(AnyKey, AnyPrimitive) | Enumerable(AnyPrimitive) | JSON::Any::Type
 
   def to_json
     as_json.to_json

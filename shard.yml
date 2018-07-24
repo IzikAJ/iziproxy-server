@@ -1,13 +1,20 @@
-name: 'iziproxy'
+name: iziproxy-core
 version: 0.1.0
+crystal: 0.24.2
+
+authors:
+  - IzikAJ <izikaj@gmail.com>
 
 dependencies:
   # database
   pg:
     github: will/crystal-pg
   # ORM
-  granite_orm:
+  granite:
     github: amberframework/granite
+
+  crecto:
+    github: fridgerator/crecto
 
   # dotenv
   dotenv:
@@ -20,8 +27,6 @@ dependencies:
     github: mperham/sidekiq.cr
     branch: master
 
-  kemal:
-    github: kemalcr/kemal
   kilt:
     github: jeromegn/kilt
   slang:
@@ -33,9 +38,13 @@ dependencies:
   optarg:
     github: mosop/optarg
 
+  crouter:
+    github: jreinert/crouter
+
 development_dependencies:
-  sentry-run:
-    github: faustinoaq/sentry-run
+  # sentry-run:
+  #   github: faustinoaq/sentry-run
+  #   branch: master
 
   sentry:
     github: samueleaton/sentry

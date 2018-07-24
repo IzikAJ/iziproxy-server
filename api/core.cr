@@ -1,23 +1,23 @@
 require "../../app/lib/utils/api_routes"
 require "./controllers/api_controller"
+require "crouter"
 
 module Api
   class Core
-    include ApiRoutes
+  end
 
-    def self.draw_routes!
-      get "session", "session#show"
-      post "session", "session#create"
-      delete "session", "session#destroy"
+  class Router < Crouter::Router
+    get "/session.json", "Api::SessionController#show"
+    post "/session.json", "Api::SessionController#create"
+    delete "/session.json", "Api::SessionController#destroy"
 
-      get "profile", "profile#show"
-      post "profile", "profile#update"
+    get "/profile.json", "Api::ProfileController#show"
+    post "/profile.json", "Api::ProfileController#update"
 
-      get "accounts/tokens", "accounts/tokens#index"
-      post "accounts/tokens", "accounts/tokens#create"
-      delete "accounts/tokens/:token_id/x", "accounts/tokens#destroy"
+    get "/accounts/tokens.json", "Api::Accounts::TokensController#index"
+    post "/accounts/tokens.json", "Api::Accounts::TokensController#create"
+    delete "/accounts/tokens/:token_id/x.json", "Api::Accounts::TokensController#destroy"
 
-      get "accounts/connections", "accounts/connections#index"
-    end
+    get "/accounts/connections.json", "Api::Accounts::ConnectionsController#index"
   end
 end

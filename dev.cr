@@ -2,7 +2,8 @@ require "sentry"
 
 # app_ws.cr
 sentry_ws = Sentry::ProcessRunner.new(
-  process_name: "AppWS",
+  # process_name: "AppWS",
+  display_name: "AppWS",
   build_command: "crystal build app_ws.cr -o bin/app_ws",
   run_command: "./bin/app_ws",
   run_args: ["-p", "9112"],
@@ -15,7 +16,8 @@ sentry_ws = Sentry::ProcessRunner.new(
 
 # app.cr
 sentry_app = Sentry::ProcessRunner.new(
-  process_name: "App MAIN",
+  # process_name: "App MAIN",
+  display_name: "App MAIN",
   build_command: "crystal build app.cr -o bin/app",
   run_command: "./bin/app",
   run_args: ["-p", "9111"],

@@ -24,9 +24,9 @@ module App
         headers = HTTP::Headers.new
         return headers if object.nil?
 
-        object.each do |key, values|
-          values.each do |value|
-            headers.add(key.as_s, value.as_s)
+        object.as_h.each do |key, values|
+          values.as_a.each do |value|
+            headers.add(key, value.as_s)
           end
         end
 

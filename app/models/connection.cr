@@ -1,6 +1,6 @@
 require "./base_model"
 
-class Connection < Granite::ORM::Base
+class Connection < Granite::Base
   include BaseModel
   adapter pg
   table_name connections

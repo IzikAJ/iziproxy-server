@@ -1,10 +1,18 @@
 require "../helpers/*"
+require "kilt"
+require "kilt/slang"
 
 abstract class ApplicationController
-  protected getter context : HTTP::Server::Context
   include ApplicationHelper
 
-  def initialize(@context)
+  protected getter context : HTTP::Server::Context
+  protected getter params : HTTP::Params
+
+  def initialize(@context, @params)
+  end
+
+  def render(file : String)
+    Kilt.render "app/views/welcome/show.slim"
   end
 
   #

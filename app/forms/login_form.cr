@@ -7,14 +7,14 @@ class LoginForm < ApplicationForm
 
   accesible email, password
 
-  def fetch_param(params : Kemal::ParamParser, key : String)
+  def fetch_param(params : HTTP::Params, key : String)
     params.body.fetch("user[#{key}]", params.body.fetch(key, nil))
   end
 
-  def self.from_params(params : Kemal::ParamParser) : LoginForm
+  def self.from_params(params : HTTP::Params) : LoginForm
     form = self.new
     form.fetch_all(params)
-    form.user = User.find_by(:email, form.email) unless form.email.nil?
+    form.user = User.find_by(email: form.email) unless form.email.nil?
     form
   end
 

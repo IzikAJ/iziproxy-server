@@ -15,7 +15,7 @@ module Api
 
     def self.from_any(context : HTTP::Server::Context) : LoginForm?
       if form = self.from_body(context)
-        form.user = User.find_by(:email, form.email) unless form.email.nil?
+        form.user = User.find_by(email: form.email) unless form.email.nil?
         return form
       end
     end

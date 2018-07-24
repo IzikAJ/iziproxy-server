@@ -1,6 +1,7 @@
 # require "../*"
-require "kemal"
+# require "kemal"
 require "json"
+require "crouter"
 require "./queries/*"
 require "./commands/redis_log/*"
 require "./commands/ws_hub"
@@ -15,6 +16,31 @@ module Sockets
 
   KIND_FIELD = "kind"
   TYPE_FIELD = "type"
+
+  class Router < Crouter::Router
+    private getter server
+
+    def initialize(path : String, @server : Server)
+      initialize(path)
+    end
+
+    get "/" do
+      context.response << "WS IS UP"
+    end
+
+    get "/:token" do
+      puts "?????? #{Time.now}"
+      ws = HTTP::WebSocketHandler.new do |sock, env|
+        puts "$!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        puts "$!!!!!!!!!!!! WS !!!!!!!!!!!!!!!!"
+        puts "$!!!!!!!!!!!! #{Sockets::Server.instance.inspect[0..100]} ?"
+        puts "$!!!!!!!!!!!! #{sock.inspect[0..100]} ???"
+        puts "$!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        Sockets::Server.instance.sock! sock, env, params
+      end
+      ws.call context
+    end
+  end
 
   class Message
     getter kind : Int32 = 0
@@ -171,73 +197,78 @@ module Sockets
       end
     end
 
-    def run
-      messages = [] of String
+    def sock!(socket, env, params)
+      sub : Redis::Subscription? = nil
+      redis = Redis.new
+      puts ">>>>>> sock! ?? #{params.inspect}"
 
-      puts "INIT WEBSOCKET"
+      if (token = params["token"]?) &&
+         (session = SessionQuery.new.find(token.not_nil!)) &&
+         (user = session.user)
+        @sockets[token] = socket
 
-      ws "/socket/:token" do |socket, env|
-        sub : Redis::Subscription? = nil
-        redis = Redis.new
-
-        if (token = env.params.url["token"]) &&
-           (session = SessionQuery.new.find(token)) &&
-           (user = session.user)
-          @sockets[token] = socket
-
-          spawn do
-            redis.subscribe(RedisLogService.name(RedisLogService::SYSTEM)) do |on|
-              on.message do |channel, message|
-                socket.send(message)
-              rescue
-                if (token = env.params.url["token"])
-                  redis.punsubscribe("*")
-                  @sockets.delete(token)
-                  redis.close rescue nil
-                  puts "Closing Socket???: #{socket}"
-                end
+        spawn do
+          redis.subscribe(RedisLogService.name(RedisLogService::SYSTEM)) do |on|
+            on.message do |channel, message|
+              socket.send(message)
+            rescue
+              if (token = params["token"]?)
+                redis.punsubscribe("*")
+                @sockets.delete(token)
+                redis.close rescue nil
+                puts "Closing Socket???: #{socket}"
               end
             end
           end
-
-          socket.send({
-            type:    WELCOME_TYPE,
-            time:    Time.now,
-            message: "welcome #{user.name || user.email || "User"}",
-          }.to_json)
         end
 
-        # Handle incoming message and dispatch it to all connected clients
-        socket.on_message do |message|
-          if (token = env.params.url["token"]) &&
-             (sess = SessionQuery.new.find(token)) &&
-             (user = sess.user)
-            if (msg = JSON.parse(message)) &&
-               (sock = @sockets[token])
-              puts "+++++++++++++++++++++++++"
-              puts ">>> #{message}"
+        socket.send({
+          type:    WELCOME_TYPE,
+          time:    Time.now,
+          message: "welcome #{user.name || user.email || "User"}",
+        }.to_json)
 
-              WS::Hub.call(msg, sock, sess, user, redis)
-              puts "+++++++++++++++++++++++++"
-              # case msg[TYPE_FIELD]?
-              # when JOIN_COMMAND
-              #   join! token, msg, sess, user, redis
-              # when LEAVE_COMMAND
-              #   leave! token, msg, sess, user, redis
-              # end
-            end
+        spawn do
+          loop do
+            sleep 30
+            break if !socket || socket.closed?
+            socket.ping
           end
-        end
-
-        # Handle disconnection and clean sockets
-        socket.on_close do |_|
-          if token = env.params.url["token"]
-            @sockets.delete(token)
-          end
-          redis.close rescue nil
-          puts "Closing Socket: #{socket}"
         end
       end
+
+      # Handle incoming message and dispatch it to all connected clients
+      socket.on_message do |message|
+        if (token = params["token"]?) &&
+           (sess = SessionQuery.new.find(token.not_nil!)) &&
+           (user = sess.user)
+          if (msg = JSON.parse(message)) &&
+             (sock = @sockets[token])
+            puts "+++++++++++++++++++++++++"
+            puts ">>> #{message}"
+
+            WS::Hub.call(msg, sock, sess, user, redis)
+            puts "+++++++++++++++++++++++++"
+          end
+        end
+      end
+
+      # Handle disconnection and clean sockets
+      socket.on_close do |_|
+        if token = params["token"]?
+          @sockets.delete(token)
+        end
+        redis.close rescue nil
+        puts "Closing Socket: #{socket}"
+      end
+    end
+
+    def handler
+      Router.new("/socket", self)
+    end
+
+    def run
+      puts "INIT WEBSOCKET"
     end
 
     def self.instance

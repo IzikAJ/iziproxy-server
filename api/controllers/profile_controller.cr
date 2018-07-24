@@ -6,7 +6,7 @@ module Api
     def show
       if (session = context.request.session) &&
          (user = session.user)
-        UserSerializer.new(user).to_json
+        respond UserSerializer.new(user)
       else
         fail!
       end
@@ -18,7 +18,7 @@ module Api
          (session = context.request.session) &&
          (user = form.user)
         form.save!
-        UserSerializer.new(user).to_json
+        respond UserSerializer.new(user)
       else
         form_error! form
       end

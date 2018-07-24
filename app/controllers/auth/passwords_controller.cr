@@ -12,7 +12,7 @@ module Auth
 
     def action_create
       redirect_if_authorized!
-      form = NewPasswordForm.from_params(context.params)
+      form = NewPasswordForm.from_params(params)
       if form && form.valid? && (user = form.user)
         user.reset_password!
         return render "app/views/auth/passwords/sent.slim"
@@ -23,13 +23,13 @@ module Auth
 
     def action_edit
       redirect_if_authorized!
-      form = UpdatePasswordForm.from_params(context.params)
+      form = UpdatePasswordForm.from_params(params)
       render "app/views/auth/passwords/edit.slim"
     end
 
     def action_update
       redirect_if_authorized!
-      form = UpdatePasswordForm.from_params(context.params)
+      form = UpdatePasswordForm.from_params(params)
       if form && form.valid? &&
          (session = context.request.session) &&
          (user = form.user)

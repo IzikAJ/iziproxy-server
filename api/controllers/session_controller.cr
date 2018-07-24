@@ -5,9 +5,10 @@ module Api
   class SessionController < ApiController
     def show
       if session = context.request.session
-        SessionSerializer.new(session).to_json
+        # SessionSerializer.new(session).to_json
+        respond SessionSerializer.new(session)
       else
-        SessionSerializer.blank.to_json
+        respond SessionSerializer.blank
       end
     end
 
@@ -17,7 +18,7 @@ module Api
          (session = context.request.session) &&
          (user = form.user)
         session.sign_in(user)
-        SessionSerializer.new(session).to_json
+        respond SessionSerializer.new(session)
       else
         form_error! form
       end

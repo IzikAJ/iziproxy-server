@@ -3,7 +3,14 @@ require "../forms/api_form"
 
 module Api
   abstract class ApiController < ApplicationController
-    def initialize(@context)
+    protected getter context : HTTP::Server::Context
+    protected getter params : HTTP::Params
+
+    def respond(data)
+      context.response.print data.to_json
+    end
+
+    def initialize(@context, @params)
       @context.response.content_type = "application/json"
     end
 

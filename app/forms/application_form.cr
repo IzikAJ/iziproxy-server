@@ -1,4 +1,4 @@
-require "kemal/param_parser"
+# require "kemal/param_parser"
 require "../lib/active/*"
 require "../lib/active/validators/*"
 

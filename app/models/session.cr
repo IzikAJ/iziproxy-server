@@ -1,6 +1,6 @@
 require "./base_model"
 
-class Session < Granite::ORM::Base
+class Session < Granite::Base
   include BaseModel
 
   EXPIRE_TIMEOUT = 7.days

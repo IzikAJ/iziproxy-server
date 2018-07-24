@@ -2,7 +2,7 @@ require "crypto/bcrypt/password"
 require "./base_model"
 require "../mailers/user_mailer"
 
-class User < Granite::ORM::Base
+class User < Granite::Base
   include BaseModel
   adapter pg
   table_name users
@@ -28,7 +28,7 @@ class User < Granite::ORM::Base
     build(args.to_h)
   end
 
-  def self.build(args : Hash(Symbol | String, String | JSON::Type)) : User
+  def self.build(args : Hash(Symbol | String, String | JSON::Any::Type)) : User
     user = self.new(args)
     user.password = args[:password] || args["password"] || Random::Secure.base64
     user

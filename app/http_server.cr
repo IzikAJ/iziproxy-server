@@ -1,4 +1,5 @@
-require "kemal"
+# require "kemal"
+require "crouter"
 
 require "./proxy_server"
 require "./lib/utils/pretty_routes"
@@ -18,25 +19,25 @@ class HttpServer
   end
 
   def self.run
-    self.instance.draw_routes!
+    self.instance
 
-    Api::Core.draw_routes!
+    # Api::Core.draw_routes!
   end
 
-  def draw_routes!
+  class Router < Crouter::Router
     # root page
-    get "/", "welcome#show"
+    get "/", "WelcomeController#show"
 
     # new session
-    get "/auth/session/new", "auth/sessions#new"
-    post "/auth/session", "auth/sessions#create"
+    get "/auth/session/new", "Auth::SessionsController#action_new"
+    post "/auth/session", "Auth::SessionsController#action_create"
     # restore password
-    get "/auth/password/new", "auth/passwords#new"
-    post "/auth/password/create", "auth/passwords#create"
+    get "/auth/password/new", "Auth::PasswordsController#action_new"
+    post "/auth/password/create", "Auth::PasswordsController#action_create"
     # change password
-    get "/auth/password/edit", "auth/passwords#edit"
-    post "/auth/password/update", "auth/passwords#update"
+    get "/auth/password/edit", "Auth::PasswordsController#action_edit"
+    post "/auth/password/update", "Auth::PasswordsController#action_update"
 
-    get "/stats", "stats#show"
+    get "/stats", "StatsController#action_show"
   end
 end

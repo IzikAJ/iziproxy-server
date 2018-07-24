@@ -7,12 +7,10 @@
 #
 windows:
   - name: izi_prxy
-    root: ~/www/sparse/iziproxy
-    layout: double-main-horizontal
+    root: ~/www/iziproxy
+    layout: main-vertical
 
     panes:
-      - npm run dev
-      - redis-server
-      - crystal sidekiq.cr
-      - crystal dev.cr
-      - echo "ready"
+      - cd server; foreman start
+      - cd client; foreman start
+      - cd client

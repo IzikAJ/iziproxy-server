@@ -13,7 +13,7 @@ module Auth
 
     def action_create
       redirect_if_authorized!
-      form = LoginForm.from_params(context.params)
+      form = LoginForm.from_params(params)
       if form && form.valid? &&
          (session = context.request.session) &&
          (user = form.user)

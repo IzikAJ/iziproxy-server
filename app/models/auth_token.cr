@@ -1,6 +1,6 @@
 require "./base_model"
 
-class AuthToken < Granite::ORM::Base
+class AuthToken < Granite::Base
   include BaseModel
   adapter pg
   table_name auth_tokens

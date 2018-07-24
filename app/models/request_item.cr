@@ -1,6 +1,6 @@
 require "./base_model"
 
-class RequestItem < Granite::ORM::Base
+class RequestItem < Granite::Base
   include BaseModel
   adapter pg
   table_name request_items

@@ -21,22 +21,19 @@ ProxyServer.configure do |conf|
 end
 
 # filters must be inserted from most common to specific one
-server = HTTP::Server.new(
-  "0.0.0.0",
-  9111,
-  [
-    HTTP::LogHandler.new,
-    Middleware::SubdomainMatcher.new(
-      ENV["HOST"], "*.@", SubdomainHandler.new
-    ),
-    Middleware::SessionHandler.new(ENV["SESSION_KEY"]),
-  ]
-) do |context|
+server = HTTP::Server.new([
+  HTTP::LogHandler.new,
+  Middleware::SubdomainMatcher.new(
+    ENV["HOST"], "*.@", SubdomainHandler.new
+  ),
+  Middleware::SessionHandler.new(ENV["SESSION_KEY"]),
+]) do |context|
   puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   context.response.content_type = "text/plain"
   context.response.print "Hello world!"
 end
+server.bind_tcp "0.0.0.0", 9111
 TcpServer.run
 server.listen

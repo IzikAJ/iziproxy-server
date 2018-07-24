@@ -15,7 +15,7 @@ class UpdatePasswordForm < ApplicationForm
   def self.from_params(params : Kemal::ParamParser) : UpdatePasswordForm
     form = self.new
     form.fetch_all(params)
-    form.user = User.find_by(:reset_password_token, form.token) if form.token
+    form.user = User.find_by(reset_password_token: form.token) if form.token
     form
   end
 

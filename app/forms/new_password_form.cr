@@ -13,7 +13,7 @@ class NewPasswordForm < ApplicationForm
   def self.from_params(params : Kemal::ParamParser) : NewPasswordForm
     form = self.new
     form.fetch_all(params)
-    form.user = User.find_by(:email, form.email) unless form.email.nil?
+    form.user = User.find_by(email: form.email) unless form.email.nil?
     form
   end
 

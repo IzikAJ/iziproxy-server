@@ -2,15 +2,23 @@ version: 1.0
 shards:
   ameba:
     github: veelenga/ameba
-    version: 0.5.1
+    version: 0.7.0
 
   baked_file_system:
     github: schovi/baked_file_system
-    version: 0.9.5
+    commit: e1447549d5ac0560720fae62179b2f2c62c9bfd1
 
   callback:
     github: mosop/callback
     version: 0.6.3
+
+  crecto:
+    github: fridgerator/crecto
+    version: 0.9.0
+
+  crouter:
+    github: jreinert/crouter
+    commit: 982f0986f9ceb6203742df475066c7ed9da8584c
 
   db:
     github: crystal-lang/crystal-db
@@ -20,13 +28,17 @@ shards:
     github: gdotdesign/cr-dotenv
     version: 0.1.0
 
-  granite_orm:
+  exception_page:
+    github: crystal-loot/exception_page
+    version: 0.1.1
+
+  granite:
     github: amberframework/granite
-    version: 0.9.1
+    version: 0.12.1
 
   kemal:
     github: kemalcr/kemal
-    version: 0.22.0
+    commit: 09bb1fcd4073a374b3a61c99e48e05a866b23c08
 
   kemal-csrf:
     github: kemalcr/kemal-csrf
@@ -34,7 +46,7 @@ shards:
 
   kemal-session:
     github: kemalcr/kemal-session
-    version: 0.9.0
+    commit: bc720cca9c27e391b4b3fc32ae7cc23f4d3f3fdc
 
   kilt:
     github: jeromegn/kilt
@@ -42,7 +54,7 @@ shards:
 
   micrate:
     github: juanedi/micrate
-    version: 0.3.0
+    version: 0.3.3
 
   optarg:
     github: mosop/optarg
@@ -50,7 +62,7 @@ shards:
 
   pg:
     github: will/crystal-pg
-    version: 0.14.1
+    version: 0.15.0
 
   pool:
     github: ysbaddaden/pool
@@ -62,7 +74,7 @@ shards:
 
   redis:
     github: stefanwille/crystal-redis
-    version: 1.9.0
+    version: 2.0.0
 
   sendgrid:
     github: dlanileonardo/sendgrid.cr
@@ -70,15 +82,11 @@ shards:
 
   sentry:
     github: samueleaton/sentry
-    version: 0.2.0
-
-  sentry-run:
-    github: faustinoaq/sentry-run
-    version: 0.2.1
+    commit: 20f2364cf59f8e94f8aaf2295669089d3060498f
 
   sidekiq:
     github: mperham/sidekiq.cr
-    commit: 7f555b19d8e69faa82de8cdb5fcd12aba8f8d308
+    commit: f3820aace32aa8d3b1cfe835536ee5ff981840fa
 
   slang:
     github: jeromegn/slang

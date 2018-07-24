@@ -7,9 +7,10 @@ module Api
       def index
         if (session = context.request.session) &&
            (user = session.user)
-          ConnectionsQuery.new(user).list.map do |t|
+          data = ConnectionsQuery.new(user).list.map do |t|
             ConnectionSerializer.new(t).as_json
-          end.to_json
+          end
+          respond data
         else
           fail!
         end

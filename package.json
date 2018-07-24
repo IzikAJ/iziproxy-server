@@ -20,8 +20,8 @@
     "nginx:stop": "nginx -s quit -c ~/www/sparse/iziproxy/nginx.conf &2>/dev/null",
     "nginx": "npm run nginx:stop && npm run nginx:start",
     "crystal:dev": "crystal dev.cr",
-    "start": "PORT=3100 react-scripts start",
-    "dev": "open http://lvh.me:8080 && npm run start",
+    "start": "BROWSER=none PORT=3100 react-scripts start",
+    "dev": "npm run start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

@@ -42,7 +42,7 @@ class TcpServer
   def save_response!(client : Client, resp : JSON::Any)
     if (req = resp["request"]?) &&
        (req_id = req["id"]?) &&
-       (item = RequestItem.find_by(:uuid, req_id.as_s)) &&
+       (item = RequestItem.find_by(uuid: req_id.as_s)) &&
        (data = resp["response"]?) &&
        (status = data["status"]?.try(&.as_i)) &&
        (headers = data["headers"]?)

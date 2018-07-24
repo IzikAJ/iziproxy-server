@@ -1,11 +1,11 @@
 module Active
   module AccessibleAttributes
     macro accesible(*keys)
-      def fetch_param(params : Kemal::ParamParser, key : String)
-        params.body.fetch(key, nil)
+      def fetch_param(params : HTTP::Params, key : String)
+        params[key]
       end
 
-      def self.from_params(params : Kemal::ParamParser)
+      def self.from_params(params : HTTP::Params)
         form = self.new
         form.fetch_all(params)
         form
@@ -23,9 +23,9 @@ module Active
         {% end %}
       end
 
-      def fetch_all(params : Kemal::ParamParser)
+      def fetch_all(params : HTTP::Params)
         {% for key in keys %}
-          self.{{key}} = fetch_param(params, "{{key}}")
+          self.{{key}} = params["{{key}}"]
         {% end %}
       end
     end
