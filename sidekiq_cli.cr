@@ -1,4 +1,5 @@
 require "sidekiq/cli"
+require "sidekiq/web"
 
 require "./app/workers/*"
 

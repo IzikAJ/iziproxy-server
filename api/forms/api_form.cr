@@ -1,5 +1,3 @@
-# require "kemal/param_parser"
-
 require "../../app/lib/active/*"
 require "../../app/lib/active/validators/*"
 

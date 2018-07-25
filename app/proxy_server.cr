@@ -16,9 +16,7 @@ class ProxyServer
   getter clients : ClientsHash = ClientsHash.new
   getter responses : ResponsesHash = ResponsesHash.new
 
-  property http_port : Int32 = 9000
   property tcp_port : Int32 = 9777
-  property host : String = "lvh.me"
 
   def self.instance
     @@instance ||= new

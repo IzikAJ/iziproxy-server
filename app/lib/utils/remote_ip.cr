@@ -1,21 +1,42 @@
+require "ipaddress"
+
 class HTTP::Server::Context
   CLIENT_IP_HEADERS = %w(
     CLIENT_IP
-    X_REAL_IP
-    X_FORWARDED_FOR
-    X_FORWARDED
-    X_CLUSTER_CLIENT_IP
+    REAL_IP
+    FORWARDED_FOR
     FORWARDED
+    CLUSTER_CLIENT_IP
   )
 
   @remote_ip : String?
 
   def remote_ip
-    @remote_ip ||= CLIENT_IP_HEADERS.map do |header|
-      dashed_header = header.tr("_", "-")
-      if headers = request.headers
-        headers[header]? || headers[dashed_header]? || headers["HTTP_#{header}"]? || headers["Http-#{dashed_header}"]?
+    if headers = request.headers
+      @remote_ip ||= find_public_ip(fetch_all_ip_headers(headers))
+    end
+  end
+
+  private def find_public_ip(ips = [] of String)
+    ips.find do |item|
+      if ip = item
+        begin
+          !IPAddress::IPv4.new(ip).private?
+        rescue
+          false
+        end
       end
-    end.find { |ip| (ip.try(&.strip.size) || 0) > 0 }
+    end || "127.0.0.1"
+  end
+
+  private def fetch_all_ip_headers(headers)
+    CLIENT_IP_HEADERS.map do |header|
+      x_header = "X_#{header}"
+      headers.get?(header).try(&.concat(headers.get?(x_header) || [] of String))
+    end
+      .flatten
+      .map(&.try(&.strip))
+      .select { |ip| ip && ip.size > 0 }
+      .uniq
   end
 end

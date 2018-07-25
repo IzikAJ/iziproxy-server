@@ -36,6 +36,10 @@ shards:
     github: amberframework/granite
     version: 0.12.1
 
+  ipaddress:
+    github: sija/ipaddress.cr
+    version: 0.1.2
+
   kemal:
     github: kemalcr/kemal
     commit: 09bb1fcd4073a374b3a61c99e48e05a866b23c08
@@ -87,10 +91,6 @@ shards:
   sidekiq:
     github: mperham/sidekiq.cr
     commit: f3820aace32aa8d3b1cfe835536ee5ff981840fa
-
-  slang:
-    github: jeromegn/slang
-    version: 1.7.1
 
   string_inflection:
     github: mosop/string_inflection

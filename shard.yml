@@ -1,6 +1,6 @@
 name: iziproxy-core
 version: 0.1.0
-crystal: 0.24.2
+crystal: 0.25.1
 
 authors:
   - IzikAJ <izikaj@gmail.com>
@@ -23,15 +23,6 @@ dependencies:
   redis:
     github: stefanwille/crystal-redis
 
-  sidekiq:
-    github: mperham/sidekiq.cr
-    branch: master
-
-  kilt:
-    github: jeromegn/kilt
-  slang:
-    github: jeromegn/slang
-
   sendgrid:
     github: dlanileonardo/sendgrid.cr
 
@@ -41,11 +32,14 @@ dependencies:
   crouter:
     github: jreinert/crouter
 
-development_dependencies:
-  # sentry-run:
-  #   github: faustinoaq/sentry-run
-  #   branch: master
+  ipaddress:
+    github: sija/ipaddress.cr
 
+  sidekiq:
+    github: mperham/sidekiq.cr
+    branch: master
+
+development_dependencies:
   sentry:
     github: samueleaton/sentry
     branch: master

@@ -95,36 +95,12 @@ class SubdomainHandler
     end
 
     response = app.responses[id]["response"]
-    puts "********************************"
-    puts env.response.headers.inspect
-    puts "________________________________"
     env.response.headers.merge! App::Utils::Headers.parse_json(response["headers"])
-    # App::Utils::Headers.parse_json(response["headers"]).each do |k, v|
-    #   if k == "Content-Type" ||
-    #      k == "Location" ||
-    #      k == "Transfer-Encoding"
-    #     env.response.headers[k] = v
-    #   end
-    #   if env.response.headers["Transfer-Encoding"]? == "chunked"
-    #   end
-    # end
     env.response.headers.delete "Transfer-Encoding"
-    # headers["Content-Length"] = body.bytesize.to_s
-
-    puts "********************************"
-    puts env.response.headers.inspect
-    puts "********************************"
 
     env.response.status_code = response["status"].as_i
 
-    # cnt = Base64.decode(response["body"].as_s)
-    # env.response.content_length = cnt.size
-    # env.response.write cnt
-    # env.response.write Base64.decode(response["body"].as_s)
-    # context.response.output = Flate::Writer.new(context.response.output, sync_close: true)
-    # Base64.decode(response["body"].as_s, env.response)
     Base64.decode(response["body"].as_s, env.response.output)
-    # env.response.output = Base64.decode(response["body"].as_s)
     env.response.flush
 
     env

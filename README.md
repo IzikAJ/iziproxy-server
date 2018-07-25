@@ -97,5 +97,26 @@ db/reset.sh - reset database & fill it
  - add commands to configure auth key
  - add commands to configure server address
 
+### Server structure mapping
+```
+connection.lvh.me
+- TCP connection with client
+- port: [TCP_PORT]:9777
+- host: [TCP_HOST]
+*.lvh.me
+- delegated subdomain
+- port: [PROXY_PORT]:80
+lvl.me:
+- server web interface
+- port: [PORT]:80
+- host: [HOST]
+  …/ws
+    - WebSocket connection scope
+  …/api
+    - API scope
+  …/
+    - React scope
+```
+
 ## License
 MIT

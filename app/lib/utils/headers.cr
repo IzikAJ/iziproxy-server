@@ -6,7 +6,6 @@ module App
       extend self
 
       def build_json(builder : JSON::Builder, headers : HTTP::Headers)
-        # builder =  if builder.nil?
         builder.object do
           headers.each do |name, values|
             builder.field name do

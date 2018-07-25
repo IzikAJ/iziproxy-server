@@ -1,8 +1,10 @@
-require "../../app/controllers/application_controller"
+require "../../app/helpers/*"
 require "../forms/api_form"
 
 module Api
-  abstract class ApiController < ApplicationController
+  abstract class ApiController
+    include ApplicationHelper
+
     protected getter context : HTTP::Server::Context
     protected getter params : HTTP::Params
 

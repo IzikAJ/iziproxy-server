@@ -1,5 +1,3 @@
-# require "../*"
-# require "kemal"
 require "json"
 require "crouter"
 require "./queries/*"
@@ -31,11 +29,6 @@ module Sockets
     get "/:token" do
       puts "?????? #{Time.now}"
       ws = HTTP::WebSocketHandler.new do |sock, env|
-        puts "$!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        puts "$!!!!!!!!!!!! WS !!!!!!!!!!!!!!!!"
-        puts "$!!!!!!!!!!!! #{Sockets::Server.instance.inspect[0..100]} ?"
-        puts "$!!!!!!!!!!!! #{sock.inspect[0..100]} ???"
-        puts "$!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         Sockets::Server.instance.sock! sock, env, params
       end
       ws.call context
@@ -115,25 +108,26 @@ module Sockets
       end
     end
 
+    private def redis_unsub!(redis : Redis, name : String)
+      puts "LEAVE: #{name}"
+      redis.unsubscribe name
+    end
+
     private def leave!(socket : String, message : JSON::Any, session : Session, user : User, redis : Redis)
       case message[KIND_FIELD]?
       when RedisLogService::GLOBAL
-        puts "LEAVE: #{RedisLogService.name(RedisLogService::GLOBAL)}"
-        redis.unsubscribe RedisLogService.name(RedisLogService::GLOBAL)
+        redis_unsub! RedisLogService.name(RedisLogService::GLOBAL)
       when RedisLogService::USER
         if user_id = user.id
-          puts "LEAVE: #{RedisLogService.name(RedisLogService::USER, user_id)}"
-          redis.unsubscribe RedisLogService.name(RedisLogService::USER, user_id)
+          redis_unsub! RedisLogService.name(RedisLogService::USER, user_id)
         end
       when RedisLogService::SESSION
         if session_id = session.id
-          puts "LEAVE: #{RedisLogService.name(RedisLogService::SESSION, session_id)}"
-          redis.unsubscribe RedisLogService.name(RedisLogService::SESSION, session_id)
+          redis_unsub! RedisLogService.name(RedisLogService::SESSION, session_id)
         end
       when RedisLogService::CLIENT
         if uuid = message["uuid"]?.try(&.as_s)
-          puts "LEAVE: #{RedisLogService.name(RedisLogService::CLIENT, uuid)}"
-          redis.unsubscribe RedisLogService.name(RedisLogService::CLIENT, uuid)
+          redis_unsub! RedisLogService.name(RedisLogService::CLIENT, uuid)
         end
       else
         puts "LEAVE FAILED: unknown kind"
@@ -199,8 +193,7 @@ module Sockets
 
     def sock!(socket, env, params)
       sub : Redis::Subscription? = nil
-      redis = Redis.new
-      puts ">>>>>> sock! ?? #{params.inspect}"
+      redis = Redis.new("127.0.0.1", 6379, nil, nil, 0, ENV["REDIS_URL"]?)
 
       if (token = params["token"]?) &&
          (session = SessionQuery.new.find(token.not_nil!)) &&
@@ -216,7 +209,6 @@ module Sockets
                 redis.punsubscribe("*")
                 @sockets.delete(token)
                 redis.close rescue nil
-                puts "Closing Socket???: #{socket}"
               end
             end
           end
@@ -246,7 +238,6 @@ module Sockets
              (sock = @sockets[token])
             puts "+++++++++++++++++++++++++"
             puts ">>> #{message}"
-
             WS::Hub.call(msg, sock, sess, user, redis)
             puts "+++++++++++++++++++++++++"
           end
@@ -263,8 +254,8 @@ module Sockets
       end
     end
 
-    def handler
-      Router.new("/socket", self)
+    def handler(mount_point = "/socket")
+      Router.new(mount_point, self)
     end
 
     def run
@@ -276,13 +267,16 @@ module Sockets
     end
 
     def initialize
-      @redis = Redis.new
       @sockets = {} of String => HTTP::WebSocket
       @channel = Channel(Sockets::Message).new
     end
 
     def self.run
       self.instance.run
+    end
+
+    def self.handler(mount_point = "/socket")
+      self.instance.handler(mount_point)
     end
   end
 end

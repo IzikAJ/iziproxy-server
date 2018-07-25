@@ -5,23 +5,12 @@ class RedisLogService
   SESSION = 3
   CLIENT  = 4
 
-  # cache ttl - 5 min
-  LOG_CACHE_TTL = 5 * 60
-
   getter redis
 
   def log(message : String, kind = GLOBAL, target : Int32 | Int64 | String | Nil = nil)
     name = channel_name(kind, target)
     # publish message
     @redis.publish(name, message)
-    # store it in cache for some time
-    # in list
-    # @redis.rpush name, message
-    # @redis.ltrim name, -100, -1
-    # # store it in cache for some time
-    # ext_name = "#{name}@#{Random.rand}"
-    # @redis.set(ext_name, message)
-    # @redis.expire(ext_name, LOG_CACHE_TTL)
   end
 
   def channel_name(kind = GLOBAL, target : Int32 | Int64 | String | Nil = nil)
@@ -42,6 +31,6 @@ class RedisLogService
   end
 
   def initialize
-    @redis = Redis.new
+    @redis = Redis.new("127.0.0.1", 6379, nil, nil, 0, ENV["REDIS_URL"]?)
   end
 end

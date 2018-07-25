@@ -14,26 +14,20 @@ AppLogger.configure do |conf|
   conf.logger.level = Logger::INFO
 end
 
-ProxyServer.configure do |conf|
-  conf.http_port = ENV["HTTP_PORT"].to_i
-  conf.tcp_port = ENV["TCP_PORT"].to_i
-  conf.host = ENV["HOST"]
-end
-
-# filters must be inserted from most common to specific one
 server = HTTP::Server.new([
   HTTP::LogHandler.new,
   Middleware::SubdomainMatcher.new(
     ENV["HOST"], "*.@", SubdomainHandler.new
   ),
-  Middleware::SessionHandler.new(ENV["SESSION_KEY"]),
 ]) do |context|
-  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-  puts "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
   context.response.content_type = "text/plain"
-  context.response.print "Hello world!"
+  context.response.print "PROXY SERVER IS UP"
 end
-server.bind_tcp "0.0.0.0", 9111
-TcpServer.run
+
+puts "TRY BIND 2 START #{ENV["PROXY_PORT"].to_i}"
+server.bind_tcp "0.0.0.0", ENV["PROXY_PORT"].to_i
+puts "TRY BIND 2 OK"
+
+TcpConnServer.run(ENV["TCP_PORT"].to_i)
+puts "READY PROXY:#{ENV["PROXY_PORT"].to_i}"
 server.listen

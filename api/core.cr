@@ -1,9 +1,11 @@
-require "../../app/lib/utils/api_routes"
 require "./controllers/api_controller"
 require "crouter"
 
 module Api
   class Core
+    def self.handler(mount_point = "/api")
+      Api::Router.new(mount_point)
+    end
   end
 
   class Router < Crouter::Router
